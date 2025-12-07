@@ -62,6 +62,147 @@ function testarConexaoFirestore() {
         statusElement.style.color = 'red';
     });
 }
+// app.js (Adicionar A PARTIR DAQUI)
+
+let recipeToEditId = null; // Variável para armazenar o ID da receita em edição
+
+// --- 3.1: Read (Leitura e Real-time Rendering) ---
+const recipesListElement = document.getElementById('lista-receitas');
+
+function fetchAndRenderRecipes() {
+    // onSnapshot: Escuta em tempo real a coleção 'receitas'
+    db.collection("receitas").onSnapshot((snapshot) => {
+        recipesListElement.innerHTML = ''; // Limpa a lista existente
+
+        if (snapshot.empty) {
+            recipesListElement.innerHTML = '<p>Ainda não há receitas. Adicione a primeira!</p>';
+            return;
+        }
+
+        // Para cada documento no snapshot, cria o elemento no DOM
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            const id = doc.id;
+            
+            const article = document.createElement('article');
+            article.className = 'recipe-card';
+            article.innerHTML = `
+                <header>
+                    <h5>${data.titulo}</h5>
+                </header>
+                <p>Ingredientes: ${data.ingredientes.split('\n').slice(0, 3).join(', ')}...</p>
+                <footer>
+                    <button class="secondary" onclick="loadRecipeForEdit('${id}', '${data.titulo.replace(/'/g, "\\'")}', '${data.ingredientes.replace(/'/g, "\\'")}', '${data.passos.replace(/'/g, "\\'")}')">Editar</button>
+                    <button class="contrast" onclick="deleteRecipe('${id}')">Eliminar</button>
+                </footer>
+            `;
+            recipesListElement.appendChild(article);
+        });
+    }, (error) => {
+        console.error("Erro ao escutar receitas (onSnapshot): ", error);
+        recipesListElement.innerHTML = `<p style="color: red;">Erro ao carregar receitas: ${error.message}</p>`;
+    });
+}
+
+// --- 3.2: Create / 3.4: Update (Submissão do Formulário) ---
+const recipeForm = document.getElementById('formulario-receita');
+
+recipeForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    handleFormSubmit();
+});
+
+function handleFormSubmit() {
+    const titulo = document.getElementById('titulo').value.trim();
+    const ingredientes = document.getElementById('ingredientes').value.trim();
+    const passos = document.getElementById('passos').value.trim();
+    
+    // Validação Mobile-First
+    if (!titulo || !ingredientes) {
+        alert('O título e os ingredientes são obrigatórios!');
+        return;
+    }
+
+    const recipeData = {
+        titulo: titulo,
+        ingredientes: ingredientes, // Armazenado como string multi-linha
+        passos: passos,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    if (recipeToEditId) {
+        // Modo Update (Atualização)
+        db.collection("receitas").doc(recipeToEditId).update(recipeData)
+            .then(() => {
+                alert("Receita atualizada com sucesso!");
+                resetFormAndShowList();
+            })
+            .catch((error) => {
+                alert("Erro ao atualizar receita: " + error.message);
+                console.error("Erro no update: ", error);
+            });
+    } else {
+        // Modo Create (Criação)
+        db.collection("receitas").add(recipeData)
+            .then(() => {
+                alert("Receita adicionada com sucesso!");
+                resetFormAndShowList();
+            })
+            .catch((error) => {
+                alert("Erro ao adicionar receita: " + error.message);
+                console.error("Erro no add: ", error);
+            });
+    }
+}
+
+function resetFormAndShowList() {
+    recipeForm.reset();
+    recipeToEditId = null; // Reseta o ID de edição
+    mostrarLista();
+}
 
 
-// --- RESTANTE DO CRUD E PWA VAI AQUI (Tarefas 3 a 6) ---
+// --- 3.3: Delete (Eliminação) ---
+function deleteRecipe(id) {
+    if (confirm("Tem certeza que deseja eliminar esta receita? Esta ação é irreversível.")) {
+        db.collection("receitas").doc(id).delete()
+            .then(() => {
+                // A lista é atualizada automaticamente devido ao onSnapshot!
+                alert("Receita eliminada.");
+            })
+            .catch((error) => {
+                alert("Erro ao eliminar receita: " + error.message);
+                console.error("Erro no delete: ", error);
+            });
+    }
+}
+
+
+// --- 3.4: Update (Carregar dados para edição) ---
+function loadRecipeForEdit(id, titulo, ingredientes, passos) {
+    recipeToEditId = id; // Define o ID da receita que está a ser editada
+    
+    // Preenche o formulário com os dados atuais
+    document.getElementById('titulo').value = titulo;
+    document.getElementById('ingredientes').value = ingredientes;
+    document.getElementById('passos').value = passos;
+
+    // Altera o texto do botão para indicar o modo de edição
+    document.getElementById('btn-salvar-receita').textContent = 'Salvar Edição';
+
+    // Navega para o formulário
+    mostrarFormulario();
+}
+
+
+// --- AJUSTE NA CHAMADA INICIAL (Adicionar fetch) ---
+
+// Modificar a função inicial no app.js para incluir a leitura
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicialmente mostra a lista (esta linha já existia)
+    mostrarLista(); 
+    
+    // Apenas testar a conexão e depois começar a escutar as receitas
+    testarConexaoFirestore();
+    fetchAndRenderRecipes(); // Inicia a escuta em tempo real!
+});
