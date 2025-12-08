@@ -1,7 +1,8 @@
 // firebase-config.js
-// Configuração e Inicialização do Firebase
+// Configuração e Inicialização do Firebase (Versão Modular)
 
-// CHAVES REAIS DO PROJETO 'cookit-83f40'
+// ATENÇÃO: É necessário ter os SKDs de app, firestore e auth importados no index.html via script tags CDN!
+
 const firebaseConfig = {
     apiKey: "AIzaSyAfjc7Z0U4w7HRJUJuYVpMnqhozcZMHgww",
     authDomain: "cookit-83f40.firebaseapp.com",
@@ -15,7 +16,10 @@ const firebaseConfig = {
 // Inicializa o Firebase
 const app = firebase.initializeApp(firebaseConfig);
 
-// Obtém a referência do Firestore
-const db = app.firestore();
+// Obtém e EXPORTA as referências para uso em outros módulos
+export const db = app.firestore();
+export const auth = app.auth(); // NOVO: Exporta a instância de Auth
 
-console.log("Firebase e Firestore inicializados para o projeto: cookit-83f40");
+console.log("Firebase, Firestore e Auth inicializados e exportados.");
+
+// Nota: O teste de conexão foi movido para o recipeService.js ou ui.js
