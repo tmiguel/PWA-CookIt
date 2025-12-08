@@ -30,5 +30,6 @@ jobs:
 
       # 2. Deploy Final: Hosting E Regras
       # O deploy usa as credenciais injetadas pela step anterior
-      - name: Deploy para Firebase Hosting e Regras
-        run: firebase deploy --project cookit-83f40 --only hosting, firestore:rules
+      - name: Deploy APENAS para Firebase Hosting
+        # Remover o 'firestore:rules' - O deploy de Hosting já funcionou.
+        run: firebase deploy
