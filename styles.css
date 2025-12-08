@@ -3,36 +3,28 @@
 
 /* 1. Cores Primárias (Pico CSS Customization) */
 :root {
-    /* Define a cor de acção primária para todos os botões/links 'primary' */
+    /* Define a cor de acção primária */
     --pico-primary: #388E3C;
-    --pico-primary-inverse: #ffffff; /* Texto branco no botão primário */
+    --pico-primary-inverse: #ffffff; 
     
     /* Cores de fundo mais claras para a UX de mobile */
     --pico-background-color: #f7f7f7;
 }
 
-/* 2. Otimização Mobile-First (Para evitar o "toque fantasma" e facilitar a interação) */
-
-/* Aumenta a área de toque para botões pequenos na navegação */
-.bottom-nav-bar li a {
-    padding: 10px 5px;
-    font-size: 0.8rem;
-    min-width: 80px; /* Garante que os botões têm largura suficiente para o toque */
+/* Força a cor dos botões primary para garantir a consistência */
+.primary {
+    background-color: var(--pico-primary) !important;
+    border-color: var(--pico-primary) !important;
+    color: var(--pico-primary-inverse) !important;
 }
+
+/* 2. Otimização Mobile-First (Garantir a área de toque) */
 
 /* Garante que o container da app não tem margens excessivas em ecrãs pequenos */
 .container {
     padding-left: 1rem;
     padding-right: 1rem;
-    max-width: 100%; /* Permite ocupar toda a largura em ecrãs muito pequenos */
-}
-
-/* Ajuste para o formulário de login do Google para a cor desejada */
-#login-google {
-    background-color: #DB4437 !important; /* Vermelho Google */
-    border-color: #DB4437 !important;
-    color: white !important;
-    min-height: 44px; /* Acessibilidade Mobile-First: Mínimo de 44px de altura de toque */
+    max-width: 100%;
 }
 
 /* Otimização da Barra de Navegação Inferior */
@@ -44,12 +36,6 @@
 #bottom-nav-bar ul li {
     flex-grow: 1;
     text-align: center;
-}
-
-/* Estilo para as mensagens de status */
-#status-conexao {
-    margin-top: 0.5rem;
-    font-size: 0.9em;
 }
 
 /* Esconde o contentor principal até o Auth decidir o que mostrar */
