@@ -1,17 +1,26 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // --- LISTA DE ACESSO AUTORIZADO (VIPs/Utilizadores Autorizados) ---
     function listaAutorizada() {
-      // *** VERIFIQUE ESTE EMAIL! ***
-      return ['tiagomfmiguel@gmail.com']; 
+      // O 'return' do array é implícito, mas a sintaxe deve ser perfeita.
+      return [
+        'tiagomfmiguel@gmail.com'
+        // Adicionar outros emails autorizados aqui (separados por vírgula)
+      ];
     }
 
+    // --- FUNÇÃO DE SEGURANÇA SIMPLES ---
     function temAcessoTotal() {
+      // A expressão de retorno completa deve ser uma única declaração (pode ter várias linhas).
       return request.auth != null && 
-             (listaAutorizada().includes(request.auth.token.email));
+             (listaAutorizada().includes(request.auth.token.email)); // <-- Sintaxe Validada
     }
 
-    // Aplicação da regra monolítica (Tudo ou Nada)
+    // --- APLICAÇÃO DA REGRA MONOLÍTICA ---
+    // Aplica a regra de "Tudo ou Nada" a todas as coleções e documentos.
     match /{document=**} {
       allow read, write: if temAcessoTotal();
     }
