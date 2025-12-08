@@ -1,5 +1,6 @@
 name: Deploy PWA Cookit para Firebase Hosting
 
+# 7. Configuração do Trigger
 on:
   push:
     branches:
@@ -13,18 +14,26 @@ jobs:
       - name: Checkout do Código
         uses: actions/checkout@v4
 
+      # 8. Setup do Ambiente Node.js
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20' # Use uma versão LTS estável
 
+      # NOVO: 13. Autenticação com a Service Account (SA)
+      # Usa a chave JSON (em Base64 no Secret) para autenticar o ambiente
+      - name: Autenticar com Google Cloud (via Secret)
+        uses: google-github-actions/auth@v2 
+        with:
+          # Injeta o valor do nosso Secret FIREBASE_SERVICE_ACCOUNT_COOKIT 
+          # A Action lida com a descodificação do Base64
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_COOKIT }}
+          
+      # 9. Instalação do Firebase CLI
       - name: Instalar Firebase CLI
         run: npm install -g firebase-tools
 
+      # 10. Deploy (SEM a flag --token)
       - name: Deploy para Firebase Hosting e Regras
-        run: |
-          firebase deploy --project cookit-83f40 \
-            --only hosting, firestore:rules \
-            --token "${{ secrets.FIREBASE_SERVICE_ACCOUNT_COOKIT }}" 
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_COOKIT }}
+        # O deploy usa as credenciais que foram injetadas no ambiente pela Action de Autenticação anterior.
+        run: firebase deploy --project cookit-83f40 --only hosting, firestore:rules
