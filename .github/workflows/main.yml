@@ -1,10 +1,9 @@
-name: Deploy PWA Cookit para Firebase Hosting (TESTE DE ISOLAMENTO)
+name: Deploy PWA Cookit para Firebase Hosting
 
-# 7. Configuração do Trigger
 on:
   push:
     branches:
-      - main # Roda o workflow em push para o branch principal
+      - main # O deploy é acionado em push para o branch principal
 
 jobs:
   deploy:
@@ -14,23 +13,22 @@ jobs:
       - name: Checkout do Código
         uses: actions/checkout@v4
 
-      # 8. Setup do Ambiente Node.js
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Use uma versão LTS estável
+          node-version: '20' # Versão LTS estável
 
-      # 9. Autenticação com a Service Account (SA) - OK
+      # 1. Autenticação Segura via Service Account
       - name: Autenticar com Google Cloud (via Secret)
         uses: google-github-actions/auth@v2 
         with:
+          # A Action descodifica o Base64 do nosso Secret
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_COOKIT }}
           
-      # 10. Instalação do Firebase CLI - OK
       - name: Instalar Firebase CLI
         run: npm install -g firebase-tools
 
-      # 11. Deploy APENAS DE HOSTING (Teste de Isolamento)
-      - name: Deploy APENAS para Firebase Hosting
-        # Usamos --only hosting para ignorar o firestore:rules
-        run: firebase deploy --project cookit-83f40 --only hosting
+      # 2. Deploy Final: Hosting E Regras
+      # O deploy usa as credenciais injetadas pela step anterior
+      - name: Deploy para Firebase Hosting e Regras
+        run: firebase deploy --project cookit-83f40 --only hosting, firestore:rules
