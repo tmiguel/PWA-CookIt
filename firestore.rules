@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function listaAutorizada() {
+      // *** VERIFIQUE ESTE EMAIL! ***
+      return ['tiagomfmiguel@gmail.com']; 
+    }
+
+    function temAcessoTotal() {
+      return request.auth != null && 
+             (listaAutorizada().includes(request.auth.token.email));
+    }
+
+    // Aplicação da regra monolítica (Tudo ou Nada)
+    match /{document=**} {
+      allow read, write: if temAcessoTotal();
+    }
+  }
+}
