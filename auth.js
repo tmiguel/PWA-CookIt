@@ -1,63 +1,81 @@
 // auth.js
 // Lógica de Autenticação (Login/Logout e Listener Principal)
 
-// Importa as instâncias de Auth e Firestore (se necessário, mas Auth é o foco)
-import { auth, db } from './firebase-config.js'; 
-import { navigateTo, currentUserId } from './router.js'; 
-import { hideSplashScreen, renderView } from './ui.js';
+// Nota: A variável global 'firebase' é fornecida pelo script tag CDN no index.html.
+import { auth } from './firebase-config.js'; 
+import { navigateTo } from './router.js'; 
+import { renderView } from './ui.js';
 
-// Variável para armazenar o UID do utilizador logado
 let currentUser = null;
 
-// Função de Inicialização: O novo "Entry Point" da PWA
-auth.onAuthStateChanged((user) => {
-    // 1. Esconde a tela de carregamento (mostra o app-container)
-    hideSplashScreen(); 
-    
-    // 2. Define o utilizador atual
-    currentUser = user;
-
-    if (user) {
-        // Logado: Carrega a UI principal
-        console.log("Utilizador logado:", user.uid);
-        document.getElementById('app-content').style.display = 'block';
-        document.getElementById('bottom-nav-bar').style.display = 'flex';
-        
-        // Se estiver em #login, redireciona para a rota inicial (#recipes)
-        if (window.location.hash === '#login' || window.location.hash === '') {
-            navigateTo('#recipes');
-        } else {
-            // Se já estiver numa rota, apenas a carrega
-            navigateTo(window.location.hash);
-        }
-    } else {
-        // Não Logado: Mostra o ecrã de Login
-        console.log("Utilizador deslogado.");
-        document.getElementById('app-content').style.display = 'none';
-        document.getElementById('bottom-nav-bar').style.display = 'none';
-        navigateTo('#login');
-    }
+// Funções de Ação do Utilizador (Listeners para o DOM)
+document.getElementById('btn-logout').addEventListener('click', () => {
+    logout();
 });
 
-// --- Funções de Ação do Utilizador ---
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    
+    const messageEl = document.getElementById('auth-message');
+    messageEl.textContent = 'A tentar entrar...';
 
-// Login Email/Password
-export function loginWithEmail(email, password) {
-    return auth.signInWithEmailAndPassword(email, password);
-}
+    auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+            messageEl.textContent = 'Login bem-sucedido!';
+        })
+        .catch(error => {
+            messageEl.textContent = `Erro de Login: ${error.message}`;
+        });
+});
 
-// Login Google (Social)
-export function loginWithGoogle() {
+document.getElementById('login-google').addEventListener('click', () => {
     const provider = new firebase.auth.GoogleAuthProvider();
-    return auth.signInWithPopup(provider);
+    auth.signInWithPopup(provider)
+        .catch(error => {
+            document.getElementById('auth-message').textContent = `Erro no Login Google: ${error.message}`;
+        });
+});
+
+// --- NOVO: Função de Inicialização (Chamada pelo main.js) ---
+export function initAuth() {
+    // onAuthStateChanged: O Listener principal que decide a rota
+    auth.onAuthStateChanged((user) => {
+        // 1. Mostra o contentor principal (escondido pelo CSS)
+        document.getElementById('app-container').classList.add('visible'); 
+        
+        currentUser = user;
+
+        const appContent = document.getElementById('app-content');
+        const bottomNav = document.getElementById('bottom-nav-bar');
+
+        if (user) {
+            // Logado: Mostra a UI principal
+            appContent.style.display = 'block';
+            bottomNav.style.display = 'flex';
+            
+            // Redireciona para a rota principal se estiver na rota de login
+            if (window.location.hash === '#login' || window.location.hash === '') {
+                navigateTo('#recipes');
+            } else {
+                // Caso contrário, tenta carregar a rota atual
+                navigateTo(window.location.hash);
+            }
+        } else {
+            // Não Logado: Mostra o ecrã de Login
+            appContent.style.display = 'none';
+            bottomNav.style.display = 'none';
+            navigateTo('#login');
+        }
+    });
 }
 
-// Logout
+// --- Funções Exportadas ---
 export function logout() {
     return auth.signOut();
 }
 
-// Exposição do estado de autenticação para outros módulos
 export function getCurrentUser() {
     return currentUser;
-      }
+}
