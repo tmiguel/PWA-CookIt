@@ -4,77 +4,128 @@
     <meta charset="UTF-8">
     <!-- Essencial para Mobile-First -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PWA de Receitas - Chef Móvel</title>
+    <title>Chef Móvel - PWA de Receitas</title>
     
     <!-- Link para o Manifest (Tarefa 5) -->
     <link rel="manifest" href="/manifest.json">
 
     <!-- Framework CSS Leve e Mobile-First (Pico CSS via CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css">
+    
+    <!-- Novo Ficheiro de Estilos Personalizados (Para a cor da marca) -->
+    <link rel="stylesheet" href="styles.css">
 
-    <!-- Estilos Adicionais (opcional - crie um styles.css se necessário) -->
-    <!-- <link rel="stylesheet" href="styles.css"> -->
-
-    <!-- Importação do Firebase SDK (Tarefa 2) -->
+    <!-- Importação do Firebase SDK (Tarefas 2 e 3) -->
+    <!-- As versões 'compat' são necessárias porque estamos a usar CDN com Vanilla JS global -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <!-- NOVO: SDK de Autenticação -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
 </head>
 <body>
-    <main class="container">
-        <!-- Título principal -->
-        <h1>Minhas Receitas PWA</h1>
+    <!-- O Container Principal da Aplicação -->
+    <div id="app-container" class="container">
+        
+        <!-- ============================================== -->
+        <!-- VIEW: LOGIN (Nova View, visível por padrão antes do check Auth) -->
+        <!-- ============================================== -->
+        <article id="view-login" style="display: none;">
+            <h2>Acesso ao Chef Móvel</h2>
+            <p>Faça login para gerenciar suas receitas globais.</p>
+            
+            <form id="login-form">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" name="email" required>
 
-        <!-- 1. Conteúdo para a Lista de Receitas -->
-        <article id="view-lista-receitas">
-            <h2>Lista de Receitas</h2>
-            <p role="alert" id="status-conexao">A testar conexão com o Firestore...</p>
-            <div id="lista-receitas">
-                <!-- Receitas serão inseridas aqui via JS -->
-                <p aria-busy="true">A carregar receitas...</p>
-            </div>
-            <button onclick="mostrarFormulario()">Adicionar Nova Receita</button>
-        </article>
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" required>
 
-        <!-- 2. Conteúdo para o Formulário (Oculto por padrão) -->
-        <article id="view-formulario" style="display: none;">
-            <h2>Adicionar/Editar Receita</h2>
-            <form id="formulario-receita">
-                <label for="titulo">Título da Receita</label>
-                <input type="text" id="titulo" name="titulo" required>
-
-                <label for="ingredientes">Ingredientes (um por linha)</label>
-                <textarea id="ingredientes" name="ingredientes" rows="5" required></textarea>
-
-                <label for="passos">Passos (instruções)</label>
-                <textarea id="passos" name="passos" rows="5"></textarea>
-
-                <button type="submit" id="btn-salvar-receita">Salvar Receita</button>
-                <button type="button" class="secondary" onclick="mostrarLista()">Cancelar</button>
+                <button type="submit" class="primary">Entrar (Email/Pass)</button>
             </form>
+
+            <p style="text-align: center; margin: 1rem 0;">— OU —</p>
+            
+            <button id="login-google" class="secondary" style="background-color: #DB4437; color: white;">
+                Entrar com Google
+            </button>
+
+            <p id="auth-message" role="alert" style="color: red; margin-top: 1rem;"></p>
         </article>
 
-        <!-- 3. Conteúdo para a Lista de Compras (Oculto por padrão) -->
-        <article id="view-lista-compras" style="display: none;">
-            <h2>Lista de Compras</h2>
-            <div id="lista-compras-conteudo">
-                <p>Nenhum ingrediente adicionado.</p>
-            </div>
-            <button class="secondary" onclick="mostrarLista()">Voltar</button>
-        </article>
-    </main>
 
-    <!-- Barra de Navegação Móvel (Mobile-First Bottom Bar) -->
-    <nav class="container" style="position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 0; background-color: var(--pico-background-color);">
-        <ul>
-            <li><a href="#" role="button" onclick="mostrarLista()">🍽️ Receitas</a></li>
-            <li><a href="#" role="button" class="secondary" onclick="mostrarListaCompras()">🛒 Compras</a></li>
-            <li><a href="#" role="button" class="contrast" onclick="mostrarFormulario()">➕ Adicionar</a></li>
-        </ul>
-    </nav>
-    <div style="height: 60px;"></div> <!-- Espaço para a barra fixa -->
+        <!-- ============================================== -->
+        <!-- VIEW: APLICAÇÃO PRINCIPAL (Visível apenas após Login) -->
+        <!-- ============================================== -->
+        <div id="app-content" style="display: none;">
+            
+            <!-- Título / Header da Aplicação -->
+            <header class="header-app" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h1>Chef Móvel</h1>
+                <button id="btn-logout" class="contrast outline" style="margin: 0; padding: 0.5rem;">Sair</button>
+            </header>
 
-    <!-- Scripts de inicialização do Firebase e o principal da aplicação -->
-    <script src="firebase-config.js"></script>
-    <script src="app.js"></script>
-</body>
-</html>
+            <!-- 1. Conteúdo para a Lista de Receitas -->
+            <article id="view-recipes" style="display: none;">
+                <h2>Lista de Receitas</h2>
+                <p role="alert" id="status-conexao">A testar conexão...</p>
+                <div id="lista-receitas">
+                    <p aria-busy="true">A carregar receitas...</p>
+                </div>
+            </article>
+
+            <!-- 2. Conteúdo para o Formulário de Receita -->
+            <article id="view-form" style="display: none;">
+                <h2>Adicionar/Editar Receita</h2>
+                <form id="recipe-form">
+                    <label for="titulo">Título da Receita</label>
+                    <input type="text" id="titulo" name="titulo" required>
+
+                    <label for="ingredientes">Ingredientes (um por linha)</label>
+                    <textarea id="ingredientes" name="ingredientes" rows="5" required></textarea>
+
+                    <label for="passos">Passos (instruções)</label>
+                    <textarea id="passos" name="passos" rows="5"></textarea>
+                    
+                    <!-- NOVO: Container para Tags/Configurações (Será preenchido pelo JS) -->
+                    <fieldset id="recipe-config-options">
+                        <legend>Tags da Receita</legend>
+                        <p>Loading tags...</p>
+                    </fieldset>
+                    
+                    <button type="submit" id="btn-salvar-receita" class="primary">Salvar Receita</button>
+                    <button type="button" class="secondary" onclick="window.location.hash = '#recipes'">Cancelar</button>
+                </form>
+            </article>
+
+            <!-- 3. Conteúdo para a Lista de Compras -->
+            <article id="view-shoppinglist" style="display: none;">
+                <h2>Lista de Compras</h2>
+                <div id="lista-compras-conteudo">
+                    <p>Nenhum ingrediente adicionado.</p>
+                </div>
+            </article>
+
+            <!-- 4. Conteúdo para a Página de Configurações (Nova Rota) -->
+            <article id="view-settings" style="display: none;">
+                <h2>Configurações</h2>
+                
+                <!-- Navegação interna para as Configs -->
+                <nav>
+                    <ul>
+                        <li><a href="#settings/tags">Tags</a></li>
+                        <li><a href="#settings/units">Unidades de Medida</a></li>
+                    </ul>
+                </nav>
+                
+                <!-- Sub-Content (Será preenchido pelo JS conforme a sub-rota) -->
+                <div id="settings-sub-view">
+                    <p>Selecione uma opção acima.</p>
+                </div>
+                
+            </article>
+        </div>
+        <!-- FIM: app-content -->
+    </div>
+
+    <!-- B
