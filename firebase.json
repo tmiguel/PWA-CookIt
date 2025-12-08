@@ -1,4 +1,6 @@
 {
+  "project": "cookit-83f40", 
+  
   "hosting": {
     "public": ".",
     "ignore": [
@@ -13,24 +15,24 @@
       }
     ],
     "headers": [
-  {
-    "source": "**/*.@(js|css|png|jpg|gif|svg)",
-    "headers": [
       {
-        "key": "Cache-Control",
-        "value": "max-age=31536000, public, immutable"
-      }
-    ]
-  },
-  {
-    "source": "/index.html",
-    "headers": [
+        "source": "**/*.@(js|css|png|jpg|gif|svg)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000, public, immutable"
+          }
+        ]
+      },
       {
-        "key": "Cache-Control",
-        "value": "max-age=600, public, must-revalidate"
+        "source": "/index.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=600, public, must-revalidate"
+          }
+        ]
       }
-    ]
-  }
     ]
   },
   "firestore": {
