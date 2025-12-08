@@ -12,7 +12,7 @@
     <!-- Framework CSS Leve e Mobile-First (Pico CSS via CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css">
     
-    <!-- Novo Ficheiro de Estilos Personalizados (Para a cor da marca) -->
+    <!-- NOVO: Ficheiro de Estilos Personalizados (Para a cor da marca) -->
     <link rel="stylesheet" href="styles.css">
 
     <!-- Importação do Firebase SDK (Tarefas 2 e 3) -->
@@ -24,7 +24,7 @@
     
 </head>
 <body>
-    <!-- O Container Principal da Aplicação -->
+    <!-- O Container Principal da Aplicação (Visível apenas após check Auth) -->
     <div id="app-container" class="container">
         
         <!-- ============================================== -->
@@ -46,7 +46,7 @@
 
             <p style="text-align: center; margin: 1rem 0;">— OU —</p>
             
-            <button id="login-google" class="secondary" style="background-color: #DB4437; color: white;">
+            <button id="login-google" class="secondary">
                 Entrar com Google
             </button>
 
@@ -65,7 +65,7 @@
                 <button id="btn-logout" class="contrast outline" style="margin: 0; padding: 0.5rem;">Sair</button>
             </header>
 
-            <!-- 1. Conteúdo para a Lista de Receitas -->
+            <!-- 1. Conteúdo para a Lista de Receitas (#recipes) -->
             <article id="view-recipes" style="display: none;">
                 <h2>Lista de Receitas</h2>
                 <p role="alert" id="status-conexao">A testar conexão...</p>
@@ -74,7 +74,7 @@
                 </div>
             </article>
 
-            <!-- 2. Conteúdo para o Formulário de Receita -->
+            <!-- 2. Conteúdo para o Formulário de Receita (#add) -->
             <article id="view-form" style="display: none;">
                 <h2>Adicionar/Editar Receita</h2>
                 <form id="recipe-form">
@@ -87,7 +87,7 @@
                     <label for="passos">Passos (instruções)</label>
                     <textarea id="passos" name="passos" rows="5"></textarea>
                     
-                    <!-- NOVO: Container para Tags/Configurações (Será preenchido pelo JS) -->
+                    <!-- Container para Tags/Configurações (Será preenchido pelo JS) -->
                     <fieldset id="recipe-config-options">
                         <legend>Tags da Receita</legend>
                         <p>Loading tags...</p>
@@ -98,7 +98,7 @@
                 </form>
             </article>
 
-            <!-- 3. Conteúdo para a Lista de Compras -->
+            <!-- 3. Conteúdo para a Lista de Compras (#shoppinglist) -->
             <article id="view-shoppinglist" style="display: none;">
                 <h2>Lista de Compras</h2>
                 <div id="lista-compras-conteudo">
@@ -106,7 +106,7 @@
                 </div>
             </article>
 
-            <!-- 4. Conteúdo para a Página de Configurações (Nova Rota) -->
+            <!-- 4. Conteúdo para a Página de Configurações (#settings) -->
             <article id="view-settings" style="display: none;">
                 <h2>Configurações</h2>
                 
@@ -128,4 +128,5 @@
         <!-- FIM: app-content -->
     </div>
 
-    <!-- B
+    <!-- Barra de Navegação Móvel (Mobile-First Bottom Bar, Visível apenas após Login) -->
+    <nav id="bottom-nav-bar" class="container" style="position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 0; background-color: var(--
