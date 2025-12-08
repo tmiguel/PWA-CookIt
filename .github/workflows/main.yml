@@ -10,23 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout do Código
-        uses: actions/checkout@v4
-
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      # Autenticação Segura via Service Account
-      - name: Autenticar com Google Cloud (via Secret)
-        uses: google-github-actions/auth@v2 
-        with:
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_COOKIT }}
-          
-      - name: Instalar Firebase CLI
-        run: npm install -g firebase-tools
-
-      # Deploy Final: Apenas Hosting (o ID do projeto é lido do firebase.json)
+      # ... (Steps de Checkout, Node.js, Autenticar, Instalar CLI)
+      
+      # Restaurar a flag --project para forçar a identificação do projeto.
       - name: Deploy Final para Firebase Hosting
-        run: firebase deploy --only hosting
+        # O comando deve incluir o ID do projeto, pois o CLI falha ao ler o firebase.json
+        run: firebase deploy --project cookit-83f40 --only hosting
