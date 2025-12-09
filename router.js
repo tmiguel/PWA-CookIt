@@ -1,7 +1,6 @@
 // router.js
 // Lógica de Rotas (Hash Router Simples)
 
-import { getCurrentUser } from './auth.js'; 
 import { renderView } from './ui.js';
 
 // Mapeamento de rotas para IDs de views no index.html
