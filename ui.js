@@ -2,7 +2,7 @@
 // Lógica de Manipulação da Interface (DOM/Views)
 
 import { fetchAndRenderRecipes, gerarListaCompras } from './recipeService.js';
-import { currentUserId } from './router.js';
+import { renderConfigCRUD } from './configService.js';
 
 // Mapeamento das views HTML
 const views = {
@@ -12,6 +12,19 @@ const views = {
     'view-shoppinglist': document.getElementById('view-shoppinglist'),
     'view-settings': document.getElementById('view-settings')
 };
+
+// --- NOVO: Funções de Controlo do Loader ---
+const loadingOverlay = document.getElementById('loading-overlay');
+
+export function showLoader(message = 'A processar...') {
+    loadingOverlay.querySelector('p:first-child').textContent = message;
+    loadingOverlay.style.display = 'flex';
+}
+
+export function hideLoader() {
+    loadingOverlay.style.display = 'none';
+}
+// --- FIM: Funções de Controlo do Loader ---
 
 // Função de troca de view
 export function renderView(viewId, fullHash) {
@@ -42,14 +55,12 @@ export function renderView(viewId, fullHash) {
 // Manipulação de sub-rotas de Configurações (#settings/tags ou #settings/units)
 function handleSettingsSubRoute(hash) {
     const subRoute = hash.split('/')[1] || 'tags'; // Padrão para #settings/tags
-    const settingsSubView = document.getElementById('settings-sub-view');
     
-    // Simplesmente injeta um título (a lógica de CRUD virá do configService)
     if (subRoute === 'tags') {
-        settingsSubView.innerHTML = '<h3>Gestão de Tags</h3><p>CRUD de tags aqui.</p>';
+        renderConfigCRUD('tags'); 
     } else if (subRoute === 'units') {
-        settingsSubView.innerHTML = '<h3>Gestão de Unidades</h3><p>CRUD de unidades aqui.</p>';
+        renderConfigCRUD('units');
     } else {
-         settingsSubView.innerHTML = '<p>Selecione uma opção de configuração.</p>';
+         document.getElementById('settings-sub-view').innerHTML = '<p>Selecione uma opção de configuração.</p>';
     }
-    }
+}
