@@ -9,14 +9,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css">
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Importação do Firebase SDKs via CDN -->
+    <!-- Importação do Firebase SDKs via CDN (Compat Versions) -->
+    <!-- ESTES TÊM DE ESTAR AQUI PARA O 'firebase' SER GLOBAL PARA OS MÓDULOS -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     
 </head>
 <body>
-    <!-- NOVO: Overlay de Carregamento (Loader) -->
+    <!-- Overlay de Carregamento (Loader) -->
     <div id="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(240, 244, 247, 0.9); z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column;">
         <p aria-busy="true">A processar...</p>
         <p>Aguarde um momento.</p>
@@ -51,7 +52,6 @@
         <!-- VIEW: APLICAÇÃO PRINCIPAL -->
         <div id="app-content" style="display: none;">
             
-            <!-- CABEÇALHO COM ÍCONE -->
             <header class="header-app" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <div style="display: flex; align-items: center;">
                     <img src="/assets/icon-192x192.png" alt="Chef Móvel Ícone" style="height: 32px; width: 32px; margin-right: 10px;">
@@ -101,15 +101,18 @@
             <!-- 4. Página de Configurações (#settings) -->
             <article id="view-settings" style="display: none;">
                 <h2>Configurações</h2>
+                
                 <nav>
                     <ul>
                         <li><a href="#settings/tags">Tags</a></li>
                         <li><a href="#settings/units">Unidades de Medida</a></li>
                     </ul>
                 </nav>
+                
                 <div id="settings-sub-view">
                     <p>Selecione uma opção acima.</p>
                 </div>
+                
             </article>
         </div>
         <!-- FIM: app-content -->
@@ -127,13 +130,12 @@
     <div style="height: 60px;"></div>
 
 
-    <!-- SCRIPTS MODULARES (ES Modules) -->
-    <script type="module" src="firebase-config.js"></script>
-    <script type="module" src="ui.js"></script>
-    <script type="module" src="recipeService.js"></script>
-    <script type="module" src="configService.js"></script>
-    <script type="module" src="router.js"></script>
+    <!-- ============================================== -->
+    <!-- SCRIPTS MODULARES (ES Modules) - APENAS O MAIN.JS -->
+    <!-- ============================================== -->
     <script type="module" src="main.js"></script> 
+    
+    <!-- Ficheiro para o Service Worker (Não modular) -->
     <script src="service-worker-register.js"></script>
 </body>
 </html>
