@@ -2,32 +2,30 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <!-- Essencial para Mobile-First -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chef Móvel - PWA de Receitas</title>
     
-    <!-- Link para o Manifest (Tarefa 5) -->
     <link rel="manifest" href="/manifest.json">
-
-    <!-- Framework CSS Leve e Mobile-First (Pico CSS via CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css">
-    
-    <!-- Ficheiro de Estilos Personalizados -->
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Importação do Firebase SDKs via CDN (Compat Versions for Vanilla JS) -->
+    <!-- Importação do Firebase SDKs via CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     
 </head>
 <body>
+    <!-- NOVO: Overlay de Carregamento (Loader) -->
+    <div id="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(240, 244, 247, 0.9); z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column;">
+        <p aria-busy="true">A processar...</p>
+        <p>Aguarde um momento.</p>
+    </div>
+    
     <!-- O Container Principal da Aplicação -->
     <div id="app-container" class="container">
         
-        <!-- ============================================== -->
-        <!-- VIEW: LOGIN (#login) -->
-        <!-- ============================================== -->
+        <!-- VIEW: LOGIN -->
         <article id="view-login" style="display: none;">
             <h2>Acesso ao Chef Móvel</h2>
             <p>Faça login para gerenciar suas receitas globais.</p>
@@ -35,10 +33,8 @@
             <form id="login-form">
                 <label for="login-email">Email</label>
                 <input type="email" id="login-email" name="email" required>
-
                 <label for="login-password">Password</label>
                 <input type="password" id="login-password" name="password" required>
-
                 <button type="submit" class="primary">Entrar (Email/Pass)</button>
             </form>
 
@@ -52,13 +48,15 @@
         </article>
 
 
-        <!-- ============================================== -->
-        <!-- VIEW: APLICAÇÃO PRINCIPAL (Contém todas as outras views) -->
-        <!-- ============================================== -->
+        <!-- VIEW: APLICAÇÃO PRINCIPAL -->
         <div id="app-content" style="display: none;">
             
+            <!-- CABEÇALHO COM ÍCONE -->
             <header class="header-app" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h1>Chef Móvel</h1>
+                <div style="display: flex; align-items: center;">
+                    <img src="/assets/icon-192x192.png" alt="Chef Móvel Ícone" style="height: 32px; width: 32px; margin-right: 10px;">
+                    <h1>Chef Móvel</h1>
+                </div>
                 <button id="btn-logout" class="contrast outline" style="margin: 0; padding: 0.5rem;">Sair</button>
             </header>
 
@@ -77,10 +75,8 @@
                 <form id="recipe-form">
                     <label for="titulo">Título da Receita</label>
                     <input type="text" id="titulo" name="titulo" required>
-
                     <label for="ingredientes">Ingredientes (um por linha)</label>
                     <textarea id="ingredientes" name="ingredientes" rows="5" required></textarea>
-
                     <label for="passos">Passos (instruções)</label>
                     <textarea id="passos" name="passos" rows="5"></textarea>
                     
@@ -105,18 +101,15 @@
             <!-- 4. Página de Configurações (#settings) -->
             <article id="view-settings" style="display: none;">
                 <h2>Configurações</h2>
-                
                 <nav>
                     <ul>
                         <li><a href="#settings/tags">Tags</a></li>
                         <li><a href="#settings/units">Unidades de Medida</a></li>
                     </ul>
                 </nav>
-                
                 <div id="settings-sub-view">
                     <p>Selecione uma opção acima.</p>
                 </div>
-                
             </article>
         </div>
         <!-- FIM: app-content -->
@@ -134,20 +127,13 @@
     <div style="height: 60px;"></div>
 
 
-    <!-- ============================================== -->
-    <!-- SCRIPTS MODULARES (ES Modules) - NOVO ENTRY POINT -->
-    <!-- ============================================== -->
+    <!-- SCRIPTS MODULARES (ES Modules) -->
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="ui.js"></script>
     <script type="module" src="recipeService.js"></script>
     <script type="module" src="configService.js"></script>
     <script type="module" src="router.js"></script>
-    <!-- REMOVIDO: <script type="module" src="auth.js"></script> -->
-    
-    <!-- NOVO ENTRY POINT ORQUESTRADOR -->
     <script type="module" src="main.js"></script> 
-    
-    <!-- Ficheiro para o Service Worker (Não modular) -->
     <script src="service-worker-register.js"></script>
 </body>
-    </html>
+</html>
