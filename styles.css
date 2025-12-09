@@ -1,14 +1,28 @@
 /* styles.css */
-/* Cor da Marca: #388E3C (Verde de Culinária) */
 
-/* 1. Cores Primárias (Pico CSS Customization) */
+/* 1. Regras Core CSS (Mobile-First e Previsibilidade) */
+* {
+    box-sizing: border-box; /* Garante que padding e border não adicionam largura */
+}
+html, body {
+    min-height: 100vh; /* Essencial para PWA e layout full-screen */
+    margin: 0;
+    padding: 0;
+}
+
+/* 2. Cores Primárias (Pico CSS Customization - TEMA AZUL) */
 :root {
-    /* Define a cor de acção primária */
-    --pico-primary: #388E3C;
+    /* Cor de acção primária (Substitui o verde) */
+    --pico-primary: #007bff; /* Azul primário */
     --pico-primary-inverse: #ffffff; 
     
-    /* Cores de fundo mais claras para a UX de mobile */
-    --pico-background-color: #f7f7f7;
+    /* Fundo principal e variantes */
+    --pico-background-color: #f0f4f7; /* Fundo muito claro */
+    --pico-secondary: #6c757d; /* Cinzento para botões secundários */
+
+    /* Cor de sucesso e erro (opcional) */
+    --pico-color-valid: #28a745; 
+    --pico-color-invalid: #dc3545;
 }
 
 /* Força a cor dos botões primary para garantir a consistência */
@@ -18,7 +32,16 @@
     color: var(--pico-primary-inverse) !important;
 }
 
-/* 2. Otimização Mobile-First (Garantir a área de toque) */
+/* Ajuste do botão do Google Login */
+#login-google {
+    background-color: #DB4437 !important; /* Vermelho Google (mantido para a marca Google) */
+    border-color: #DB4437 !important;
+    color: white !important;
+    min-height: 44px;
+}
+
+
+/* 3. Otimização da Navegação Inferior (UX Mobile-First) */
 
 /* Garante que o container da app não tem margens excessivas em ecrãs pequenos */
 .container {
@@ -27,18 +50,45 @@
     max-width: 100%;
 }
 
-/* Otimização da Barra de Navegação Inferior */
+/* Estilo da barra de navegação */
+#bottom-nav-bar {
+    border-top: 1px solid var(--pico-border-color); /* Separador visual */
+}
 #bottom-nav-bar ul {
     justify-content: space-around;
     padding: 0;
     margin: 0;
+    list-style: none; /* Remove pontos da lista */
 }
 #bottom-nav-bar ul li {
     flex-grow: 1;
     text-align: center;
 }
 
-/* Esconde o contentor principal até o Auth decidir o que mostrar */
+/* Estilo para os links de navegação */
+#bottom-nav-bar ul li a {
+    padding: 10px 5px;
+    min-height: 44px; /* Acessibilidade: Mínimo de 44px de altura de toque */
+    display: block; /* Ocupa a altura mínima */
+    text-decoration: none;
+    color: var(--pico-muted-color); /* Cor padrão */
+    transition: color 0.2s ease;
+}
+
+/* Estado Ativo (Feedback Visual) */
+#bottom-nav-bar ul li a.active-link {
+    color: var(--pico-primary) !important; 
+    border-bottom: 2px solid var(--pico-primary); /* Destaque inferior */
+    font-weight: bold;
+}
+
+/* 4. Estilo para as mensagens de status */
+#status-conexao {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+}
+
+/* 5. Esconde o contentor principal até o Auth decidir o que mostrar */
 #app-container {
     opacity: 0;
     transition: opacity 0.5s ease;
@@ -46,4 +96,4 @@
 
 #app-container.visible {
     opacity: 1;
-}
+    }
