@@ -1,9 +1,14 @@
 // main.js
-// Orquestrador da Aplicação (Entry Point)
+// Orquestrador da Aplicação (Entry Point ÚNICO)
 
-import { initAuth } from './auth.js';
-// Os módulos router, recipeService, etc., são importados apenas por estarem nas tags script no index.html
-// ou pelos outros módulos (ex: ui.js importa recipeService.js).
+// Importa todos os módulos de lógica. A ordem é importante para o setup.
+import './firebase-config.js'; 
+import './ui.js'; 
+import './recipeService.js'; 
+import './configService.js'; 
+import './router.js'; 
+
+import { initAuth } from './auth.js'; // auth.js tem a função de inicialização
 
 document.addEventListener('DOMContentLoaded', () => {
     // Inicia o listener de autenticação, que irá desencadear a navegação/UI
