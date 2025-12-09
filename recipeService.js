@@ -4,6 +4,7 @@
 import { db } from './firebase-config.js';
 import { navigateTo } from './router.js';
 import { getCurrentUser } from './auth.js';
+import { showLoader, hideLoader } from './ui.js'; // NOVO: Importa funções do Loader
 
 // Variáveis Globais para CRUD e Lista de Compras
 let recipeToEditId = null; 
@@ -16,12 +17,10 @@ const shoppingListContent = document.getElementById('lista-compras-conteudo');
 
 // --- FUNÇÕES DE SETUP/INICIALIZAÇÃO ---
 
-// Teste de Conexão (Movido para cá)
 export function testConnection() {
     const statusElement = document.getElementById('status-conexao');
     statusElement.textContent = "A tentar ler dados de teste...";
     
-    // Apenas lemos a coleção de receitas, que é global
     db.collection("receitas").limit(1).get()
     .then(() => {
         statusElement.textContent = "✅ Conexão ao Firestore OK.";
@@ -33,14 +32,14 @@ export function testConnection() {
         statusElement.style.color = 'red';
     });
 }
-testConnection(); // Executa o teste assim que o módulo é carregado
+testConnection();
 
 
 // --- TAREFA 3: CRUD DE RECEITAS ---
 
 // Read (Leitura e Real-time Rendering)
 export function fetchAndRenderRecipes() {
-    // 1. onSnapshot: Escuta em tempo real a coleção 'receitas'
+    // ... (Código de onSnapshot sem alterações, pois não é uma operação de bloqueio)
     db.collection("receitas").onSnapshot((snapshot) => {
         recipesListElement.innerHTML = ''; 
         allRecipesData = []; 
@@ -50,7 +49,6 @@ export function fetchAndRenderRecipes() {
             return;
         }
 
-        // 2. Renderização
         snapshot.forEach((doc) => {
             const data = doc.data();
             const id = doc.id;
@@ -60,6 +58,7 @@ export function fetchAndRenderRecipes() {
 
             const article = document.createElement('article');
             article.className = 'recipe-card';
+            // O uso de CustomEvent permite a comunicação entre o DOM e o JS modular
             article.innerHTML = `
                 <header>
                     <input type="checkbox" id="check-${id}" data-recipe-id="${id}" onchange="this.dispatchEvent(new CustomEvent('toggle-shopping', { bubbles: true, detail: { id: '${id}' } }))" 
@@ -90,7 +89,7 @@ recipeForm.addEventListener('submit', function(e) {
 
 function handleFormSubmit() {
     const user = getCurrentUser();
-    if (!user) return alert("Erro: Utilizador não autenticado."); // Checagem de segurança
+    if (!user) return alert("Erro: Utilizador não autenticado.");
     
     const titulo = document.getElementById('titulo').value.trim();
     const ingredientes = document.getElementById('ingredientes').value.trim();
@@ -105,24 +104,33 @@ function handleFormSubmit() {
         titulo: titulo,
         ingredientes: ingredientes, 
         passos: passos,
-        // Mantém a 'criada por' mesmo que os dados sejam partilhados
         userId: user.uid, 
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     if (recipeToEditId) {
-        // Update (Atualização)
+        showLoader('A atualizar receita...'); // MOSTRAR LOADER
         db.collection("receitas").doc(recipeToEditId).update(recipeData)
             .then(() => {
+                hideLoader(); // ESCONDER LOADER
                 alert("Receita atualizada com sucesso!");
                 resetFormAndNavigate();
+            })
+            .catch((error) => {
+                hideLoader(); // ESCONDER LOADER
+                alert("Erro ao atualizar receita: " + error.message);
             });
     } else {
-        // Create (Criação)
+        showLoader('A adicionar nova receita...'); // MOSTRAR LOADER
         db.collection("receitas").add(recipeData)
             .then(() => {
+                hideLoader(); // ESCONDER LOADER
                 alert("Receita adicionada com sucesso!");
                 resetFormAndNavigate();
+            })
+            .catch((error) => {
+                hideLoader(); // ESCONDER LOADER
+                alert("Erro ao adicionar receita: " + error.message);
             });
     }
 }
@@ -138,9 +146,15 @@ function resetFormAndNavigate() {
 document.body.addEventListener('delete-recipe', function(e) {
     const id = e.detail.id;
     if (confirm("Tem certeza que deseja eliminar esta receita?")) {
+        showLoader('A eliminar receita...'); // MOSTRAR LOADER
         db.collection("receitas").doc(id).delete()
             .then(() => {
-                localStorage.removeItem(id); // Remove a flag de lista de compras
+                hideLoader(); // ESCONDER LOADER
+                localStorage.removeItem(id); 
+                alert("Receita eliminada.");
+            })
+            .catch(() => {
+                hideLoader(); // ESCONDER LOADER
             });
     }
 });
@@ -163,8 +177,7 @@ document.body.addEventListener('load-edit', function(e) {
 
 
 // --- TAREFA 4: LÓGICA DA LISTA DE COMPRAS ---
-
-// Persistência de Seleção de Receita
+// ... (O restante do código da Lista de Compras permanece igual)
 document.body.addEventListener('toggle-shopping', function(e) {
     const id = e.detail.id;
     const isChecked = document.getElementById(`check-${id}`).checked;
@@ -180,7 +193,6 @@ document.body.addEventListener('toggle-shopping', function(e) {
 export function gerarListaCompras() {
     const aggregatedIngredients = {};
 
-    // 1. Encontrar IDs de receitas selecionadas
     const selectedRecipeIds = Object.keys(localStorage).filter(key => 
         (localStorage.getItem(key) === 'true') && (key.length < 30)
     );
@@ -190,7 +202,6 @@ export function gerarListaCompras() {
         return;
     }
 
-    // 2. Iterar e agregar ingredientes
     const selectedRecipes = allRecipesData.filter(recipe => selectedRecipeIds.includes(recipe.id));
 
     selectedRecipes.forEach(recipe => {
@@ -203,7 +214,6 @@ export function gerarListaCompras() {
         });
     });
 
-    // 3. Renderizar a lista na UI
     let html = '<ul>';
     Object.values(aggregatedIngredients).forEach(item => {
         const isBought = localStorage.getItem(`bought_${item.name}`) === 'true';
