@@ -1,6 +1,6 @@
-// router.js
-// Lógica de Rotas (Hash Router Simples)
+// router.js (Versão Final de Estabilidade)
 
+import { getCurrentUser } from './auth.js'; 
 import { renderView } from './ui.js';
 
 // Mapeamento de rotas para IDs de views no index.html
@@ -42,24 +42,25 @@ function handleRoute() {
     
     if (viewId) {
         renderView(viewId, hash); 
-        updateActiveLink(routeKey); // NOVO: Atualiza o link ativo
+        updateActiveLink(routeKey); 
     } else {
         renderView('view-recipes', '#recipes'); 
     }
 }
 
-// NOVO: Aplica a classe 'active-link' ao link da navegação atual
+// Aplica a classe 'active-link' ao link da navegação atual
 function updateActiveLink(currentRoute) {
     const navLinks = document.querySelectorAll('#bottom-nav-bar a');
     
     navLinks.forEach(link => {
         link.classList.remove('active-link');
         
-        // Compara o href do link com a rota atual
         if (link.getAttribute('href') === currentRoute) {
             link.classList.add('active-link');
         }
     });
 }
 
+// Listener de hash
 window.addEventListener('hashchange', handleRoute);
+// Não há chamada inicial, o auth.js irá chamar o navigateTo na inicialização
