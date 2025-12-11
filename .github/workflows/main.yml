@@ -5,22 +5,21 @@ name: Deploy to Firebase Hosting
 on:
   push:
     branches:
-      - main # A branch que irá desencadear o deploy
+      - main # A branch que irá desencadear o deploy (mude se usar outra)
 
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
+      # 1. Faz o checkout do código do repositório
       - uses: actions/checkout@v3
 
+      # 2. Ação de Deploy para o Firebase
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          # Note: O FirebaseExtended/action-hosting-deploy@v0 usa FIREBASE_TOKEN como uma variável de ambiente
-          # se não for fornecido um firebaseServiceAccount no 'with'.
-          projectId: cookit-83f40 
-          channelId: live
-        env:
-          # É aqui que o seu token de login (obtido via firebase login:ci) deve ser passado.
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOKEN }}
+          # CORREÇÃO: Referencia o Secret que você criou no GitHub
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_COOKIT }}
+          projectId: cookit-83f40 # O ID do seu projeto Firebase
+          channelId: live # O canal de deploy (produção)
