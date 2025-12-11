@@ -2,39 +2,32 @@
 
 /* 1. Regras Core CSS (Mobile-First e Previsibilidade) */
 * {
-    box-sizing: border-box; /* Garante que padding e border não adicionam largura */
+    box-sizing: border-box;
 }
 html, body {
-    min-height: 100vh; /* Essencial para PWA e layout full-screen */
+    min-height: 100vh;
     margin: 0;
     padding: 0;
 }
 
 /* 2. Cores Primárias (Pico CSS Customization - TEMA AZUL) */
 :root {
-    /* Cor de acção primária (Substitui o verde) */
-    --pico-primary: #007bff; /* Azul primário */
+    --pico-primary: #007bff; 
     --pico-primary-inverse: #ffffff; 
-    
-    /* Fundo principal e variantes */
-    --pico-background-color: #f0f4f7; /* Fundo muito claro */
-    --pico-secondary: #6c757d; /* Cinzento para botões secundários */
-
-    /* Cor de sucesso e erro (opcional) */
+    --pico-background-color: #f0f4f7; 
+    --pico-secondary: #6c757d; 
     --pico-color-valid: #28a745; 
     --pico-color-invalid: #dc3545;
 }
 
-/* Força a cor dos botões primary para garantir a consistência */
 .primary {
     background-color: var(--pico-primary) !important;
     border-color: var(--pico-primary) !important;
     color: var(--pico-primary-inverse) !important;
 }
 
-/* Ajuste do botão do Google Login */
 #login-google {
-    background-color: #DB4437 !important; /* Vermelho Google (mantido para a marca Google) */
+    background-color: #DB4437 !important; 
     border-color: #DB4437 !important;
     color: white !important;
     min-height: 44px;
@@ -42,23 +35,25 @@ html, body {
 
 
 /* 3. Otimização da Navegação Inferior (UX Mobile-First) */
-
-/* Garante que o container da app não tem margens excessivas em ecrãs pequenos */
 .container {
     padding-left: 1rem;
     padding-right: 1rem;
     max-width: 100%;
 }
 
-/* Estilo da barra de navegação */
+/* NOVO: Ajuste para garantir que Header não quebra e cabe no ecrã */
+.header-app {
+    flex-wrap: nowrap; /* Garante que o Logout e o Título fiquem na mesma linha */
+}
+
 #bottom-nav-bar {
-    border-top: 1px solid var(--pico-border-color); /* Separador visual */
+    border-top: 1px solid var(--pico-border-color);
 }
 #bottom-nav-bar ul {
     justify-content: space-around;
     padding: 0;
     margin: 0;
-    list-style: none; /* Remove pontos da lista */
+    list-style: none;
 }
 #bottom-nav-bar ul li {
     flex-grow: 1;
@@ -67,33 +62,58 @@ html, body {
 
 /* Estilo para os links de navegação */
 #bottom-nav-bar ul li a {
-    padding: 10px 5px;
-    min-height: 44px; /* Acessibilidade: Mínimo de 44px de altura de toque */
-    display: block; /* Ocupa a altura mínima */
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.7rem; 
+    padding: 5px 0;
     text-decoration: none;
-    color: var(--pico-muted-color); /* Cor padrão */
+    color: var(--pico-muted-color); 
     transition: color 0.2s ease;
+}
+
+/* Estilo de Ícones */
+#bottom-nav-bar ul li a span {
+    font-size: 1.2rem;
+    margin-bottom: 2px;
 }
 
 /* Estado Ativo (Feedback Visual) */
 #bottom-nav-bar ul li a.active-link {
     color: var(--pico-primary) !important; 
-    border-bottom: 2px solid var(--pico-primary); /* Destaque inferior */
+    border-top: 2px solid var(--pico-primary); 
+    border-bottom: none; 
     font-weight: bold;
 }
 
-/* 4. Estilo para as mensagens de status */
-#status-conexao {
-    margin-top: 0.5rem;
-    font-size: 0.9em;
+/* 4. Estilo de Cards de Receita */
+.recipe-card {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); 
+    transition: transform 0.2s ease-in-out;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
-/* 5. Esconde o contentor principal até o Auth decidir o que mostrar */
+.recipe-card:active {
+    transform: scale(0.98);
+}
+
+.recipe-card footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--pico-border-color);
+    margin-top: 1rem;
+}
+
+/* 5. Estilos de Inicialização */
 #app-container {
     opacity: 0;
     transition: opacity 0.5s ease;
 }
-
 #app-container.visible {
     opacity: 1;
-    }
+}
