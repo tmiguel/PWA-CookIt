@@ -1,11 +1,12 @@
 // service-worker-register.js
 // Registo do Service Worker (SW)
 
-// --- Registo do Service Worker (Tarefa 6) ---
+// O registo é feito se a funcionalidade for suportada pelo browser
 if ('serviceWorker' in navigator) {
-    // Usamos 'load' para garantir que a página está totalmente carregada antes de registar o SW
+    // Espera que a página termine de carregar antes de registar
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
+        // CORRIGIDO: Registar com o caminho relativo (./) para o ambiente Firebase Hosting (raiz)
+        navigator.serviceWorker.register('./service-worker.js') 
             .then(reg => {
                 console.log('Service Worker registado com sucesso:', reg.scope);
             })
