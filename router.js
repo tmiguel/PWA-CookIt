@@ -1,4 +1,5 @@
-// router.js (Versão Final de Estabilidade)
+// router.js
+// Lógica de Rotas (Hash Router Simples)
 
 import { getCurrentUser } from './auth.js'; 
 import { renderView } from './ui.js';
@@ -23,7 +24,8 @@ export function navigateTo(hash) {
 
 // Handler principal de rotas
 function handleRoute() {
-    const hash = window.location.hash || '#recipes'; 
+    // CORRIGIDO: Força #login como rota inicial se não houver hash, para iniciar a UI
+    const hash = window.location.hash || '#login'; 
     const isAuthenticated = getCurrentUser() !== null;
     
     // 1. Rota de Acesso (Gatekeeper)
@@ -44,6 +46,7 @@ function handleRoute() {
         renderView(viewId, hash); 
         updateActiveLink(routeKey); 
     } else {
+        // Fallback para a lista de receitas se a rota for desconhecida
         renderView('view-recipes', '#recipes'); 
     }
 }
@@ -61,6 +64,4 @@ function updateActiveLink(currentRoute) {
     });
 }
 
-// Listener de hash
 window.addEventListener('hashchange', handleRoute);
-// Não há chamada inicial, o auth.js irá chamar o navigateTo na inicialização
