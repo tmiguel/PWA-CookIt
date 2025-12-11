@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="styles.css">
 
     <!-- Importação do Firebase SDKs via CDN (Compat Versions) -->
-    <!-- ESTES TÊM DE ESTAR AQUI PARA O 'firebase' SER GLOBAL PARA OS MÓDULOS -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -52,12 +51,14 @@
         <!-- VIEW: APLICAÇÃO PRINCIPAL -->
         <div id="app-content" style="display: none;">
             
+            <!-- CABEÇALHO COM ÍCONE E LOGOUT CORRIGIDO -->
             <header class="header-app" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <div style="display: flex; align-items: center;">
                     <img src="/assets/icon-192x192.png" alt="Chef Móvel Ícone" style="height: 32px; width: 32px; margin-right: 10px;">
-                    <h1>Chef Móvel</h1>
+                    <h1>Receitas PWA</h1> <!-- Título Encurtado -->
                 </div>
-                <button id="btn-logout" class="contrast outline" style="margin: 0; padding: 0.5rem;">Sair</button>
+                <!-- Botão de Logout com estilo para ser compacto e garantir que cabe -->
+                <button id="btn-logout" class="contrast outline" style="margin: 0; padding: 0.5rem; white-space: nowrap;">Sair</button>
             </header>
 
             <!-- 1. Lista de Receitas (#recipes) -->
@@ -111,31 +112,4 @@
                 
                 <div id="settings-sub-view">
                     <p>Selecione uma opção acima.</p>
-                </div>
-                
-            </article>
-        </div>
-        <!-- FIM: app-content -->
-    </div>
-
-    <!-- Barra de Navegação Móvel -->
-    <nav id="bottom-nav-bar" class="container" style="position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 0; background-color: var(--pico-background-color); display: none;">
-        <ul>
-            <li><a href="#recipes" role="button">🍽️ Receitas</a></li>
-            <li><a href="#shoppinglist" role="button" class="secondary">🛒 Compras</a></li>
-            <li><a href="#add" role="button" class="contrast">➕ Adicionar</a></li>
-            <li><a href="#settings" role="button" class="secondary">⚙️ Config</a></li>
-        </ul>
-    </nav>
-    <div style="height: 60px;"></div>
-
-
-    <!-- ============================================== -->
-    <!-- SCRIPTS MODULARES (ES Modules) - APENAS O MAIN.JS -->
-    <!-- ============================================== -->
-    <script type="module" src="main.js"></script> 
-    
-    <!-- Ficheiro para o Service Worker (Não modular) -->
-    <script src="service-worker-register.js"></script>
-</body>
-</html>
+                </d
