@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chef Móvel - PWA de Receitas</title>
     
-    <link rel="manifest" href="/manifest.json">
+    <!-- NOVO: Base Tag para corrigir caminhos relativos no GitHub Pages -->
+    <base href="/PWA-CookIt/"> 
+    
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css">
     <link rel="stylesheet" href="styles.css">
 
@@ -51,16 +54,15 @@
         <!-- VIEW: APLICAÇÃO PRINCIPAL -->
         <div id="app-content" style="display: none;">
             
-            <!-- CABEÇALHO COM ÍCONE E LOGOUT CORRIGIDO -->
             <header class="header-app" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <div style="display: flex; align-items: center;">
-                    <img src="/assets/icon-192x192.png" alt="Chef Móvel Ícone" style="height: 32px; width: 32px; margin-right: 10px;">
-                    <h1>Receitas PWA</h1> <!-- Título Encurtado -->
+                    <img src="assets/icon-192x192.png" alt="Chef Móvel Ícone" style="height: 32px; width: 32px; margin-right: 10px;">
+                    <h1>Receitas PWA</h1>
                 </div>
-                <!-- Botão de Logout com estilo para ser compacto e garantir que cabe -->
+                <!-- Botão de Logout com estilos inline de visibilidade/contraste -->
                 <button id="btn-logout" class="contrast outline" 
-            style="margin: 0; padding: 0.5rem; white-space: nowrap; font-weight: bold; font-size: 0.8rem; color: white !important; border-color: white !important;">
-        Sair
+                        style="margin: 0; padding: 0.5rem; white-space: nowrap; font-weight: bold; font-size: 0.8rem; color: white !important; border-color: white !important;">
+                    Sair
                 </button>
             </header>
 
@@ -70,7 +72,7 @@
                 <p role="alert" id="status-conexao">A testar conexão...</p>
                 <div id="lista-receitas">
                     <p aria-busy="true">A carregar receitas...</p>
-                </div>
+                </divs>
             </article>
 
             <!-- 2. Formulário de Receita (#add) -->
@@ -115,4 +117,27 @@
                 
                 <div id="settings-sub-view">
                     <p>Selecione uma opção acima.</p>
-                </d
+                </div>
+                
+            </article>
+        </div>
+        <!-- FIM: app-content -->
+    </div>
+
+    <!-- Barra de Navegação Móvel -->
+    <nav id="bottom-nav-bar" class="container" style="position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 0; background-color: var(--pico-background-color); display: none;">
+        <ul>
+            <li><a href="#recipes" role="button"><span>🍽️</span> Receitas</a></li>
+            <li><a href="#shoppinglist" role="button" class="secondary"><span>🛒</span> Compras</a></li>
+            <li><a href="#add" role="button" class="contrast"><span>➕</span> Adicionar</a></li>
+            <li><a href="#settings" role="button" class="secondary"><span>⚙️</span> Config</a></li>
+        </ul>
+    </nav>
+    <div style="height: 60px;"></div>
+
+
+    <!-- SCRIPTS MODULARES (ES Modules) -->
+    <script type="module" src="main.js"></script> 
+    <script src="service-worker-register.js"></script>
+</body>
+</html>
