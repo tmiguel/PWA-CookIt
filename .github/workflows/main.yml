@@ -1,11 +1,12 @@
 # .github/workflows/firebase-hosting-deploy.yml
+# Workflow para deploy automatizado para Firebase Hosting (Custo Zero)
 
 name: Deploy to Firebase Hosting
 
 on:
   push:
     branches:
-      - main # A branch que irá desencadear o deploy (mude se usar outra)
+      - main # A branch que irá desencadear o deploy
 
 jobs:
   build_and_deploy:
@@ -19,7 +20,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          # CORREÇÃO: Referencia o Secret que você criou no GitHub
+          # O valor deste Secret DEVE ser a Chave JSON da Conta de Serviço
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_COOKIT }}
           projectId: cookit-83f40 # O ID do seu projeto Firebase
           channelId: live # O canal de deploy (produção)
