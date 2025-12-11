@@ -2,24 +2,24 @@
   "name": "Chef Móvel - PWA de Receitas",
   "short_name": "Chef Móvel",
   "description": "Gerencie suas receitas e listas de compras offline. Desenvolvido para mobile-first!",
-  "start_url": "/PWA-CookIt/index.html",
+  "start_url": "/index.html",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#007bff",
   "background_color": "#f0f4f7",
   "icons": [
     {
-      "src": "/PWA-CookIt/assets/icon-192x192.png",
+      "src": "/assets/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/PWA-CookIt/assets/icon-512x512.png",
+      "src": "/assets/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/PWA-CookIt/assets/icon-512x512.png",
+      "src": "/assets/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
