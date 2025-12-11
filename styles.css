@@ -12,10 +12,10 @@ html, body {
 
 /* 2. Cores Primárias (Pico CSS Customization - TEMA AZUL) */
 :root {
-    --pico-primary: #007bff; 
+    --pico-primary: #007bff; /* Azul primário */
     --pico-primary-inverse: #ffffff; 
-    --pico-background-color: #f0f4f7; 
-    --pico-secondary: #6c757d; 
+    --pico-background-color: #f0f4f7; /* Fundo muito claro */
+    --pico-secondary: #6c757d; /* Cinzento para botões secundários */
     --pico-color-valid: #28a745; 
     --pico-color-invalid: #dc3545;
 }
@@ -41,9 +41,16 @@ html, body {
     max-width: 100%;
 }
 
-/* NOVO: Ajuste para garantir que Header não quebra e cabe no ecrã */
+/* Garante que o Header não quebra */
 .header-app {
-    flex-wrap: nowrap; /* Garante que o Logout e o Título fiquem na mesma linha */
+    flex-wrap: nowrap; 
+}
+
+/* NOVO: Estilo de Contraste para o Botão de Logout */
+#btn-logout {
+    color: var(--pico-primary-inverse) !important; /* Cor de texto branca/clara */
+    border-color: var(--pico-primary-inverse) !important; /* Borda branca/clara */
+    background-color: transparent !important; /* Fundo transparente */
 }
 
 #bottom-nav-bar {
@@ -81,39 +88,4 @@ html, body {
 
 /* Estado Ativo (Feedback Visual) */
 #bottom-nav-bar ul li a.active-link {
-    color: var(--pico-primary) !important; 
-    border-top: 2px solid var(--pico-primary); 
-    border-bottom: none; 
-    font-weight: bold;
-}
-
-/* 4. Estilo de Cards de Receita */
-.recipe-card {
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); 
-    transition: transform 0.2s ease-in-out;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.recipe-card:active {
-    transform: scale(0.98);
-}
-
-.recipe-card footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 1rem;
-    border-top: 1px dashed var(--pico-border-color);
-    margin-top: 1rem;
-}
-
-/* 5. Estilos de Inicialização */
-#app-container {
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-#app-container.visible {
-    opacity: 1;
-}
+    color: var(--pic
