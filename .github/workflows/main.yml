@@ -13,10 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Ação para fazer o deploy para o Firebase Hosting
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOKEN }}
-          projectId: cookit-83f40 # O ID do seu projeto
-          channelId: live # O canal de deploy (produção)
+          # Note: O FirebaseExtended/action-hosting-deploy@v0 usa FIREBASE_TOKEN como uma variável de ambiente
+          # se não for fornecido um firebaseServiceAccount no 'with'.
+          projectId: cookit-83f40 
+          channelId: live
+        env:
+          # É aqui que o seu token de login (obtido via firebase login:ci) deve ser passado.
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOKEN }}
