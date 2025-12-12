@@ -4,26 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CookIt PWA</title>
-    <!-- Caminho relativo para CSS -->
-    <link rel="stylesheet" href="./src/styles.css">
+    <link rel="stylesheet" href="src/styles.css?v=1.1">
 </head>
 <body>
-    <div id="app">
-        <!-- Header Container -->
-        <div id="header-container"></div>
 
-        <!-- Conteúdo Dinâmico -->
-        <main id="main-container">
-            <p style="text-align:center; margin-top:50px; color:#666;">
-                A carregar CookIt...
-            </p>
-        </main>
-
-        <!-- Menu Container -->
-        <div id="bottom-nav-container"></div>
+    <div id="app-loader" class="loader-overlay">
+        <img src="assets/Icon-192x192.png" alt="Carregar..." class="loader-icon">
     </div>
 
-    <!-- Caminho relativo para JS (Module) -->
-    <script type="module" src="src/js/main.js"></script>
+    <div id="app">
+        <header id="header-container"></header>
+        <main id="main-container"></main>
+        <nav id="bottom-nav-container"></nav>
+    </div>
+
+    <script type="module" src="src/js/main.js?v=1.1"></script>
 </body>
 </html>
