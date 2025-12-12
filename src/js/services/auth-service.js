@@ -1,17 +1,16 @@
 import { auth, googleProvider } from '../firebase.js';
 import { 
-    signInWithRedirect, // Mudei de Popup para Redirect
+    signInWithRedirect, 
     signOut, 
-    onAuthStateChanged 
+    onAuthStateChanged,
+    getRedirectResult // <--- NOVO
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 export async function loginWithGoogle() {
     try {
-        // Redireciona a página inteira para o Google (melhor para Mobile/PWA)
         await signInWithRedirect(auth, googleProvider);
     } catch (error) {
-        console.error("Erro Login:", error);
-        alert("Erro ao iniciar sessão: " + error.message);
+        alert("Erro ao iniciar: " + error.message);
     }
 }
 
@@ -24,9 +23,23 @@ export async function logout() {
     }
 }
 
-// Ouve as mudanças de estado (funciona igual com Popup ou Redirect)
 export function monitorAuthState(callback) {
     onAuthStateChanged(auth, (user) => {
         callback(user);
     });
+}
+
+// --- NOVA FUNÇÃO PARA DEBUG ---
+// Verifica se acabámos de voltar do Google e se houve erro
+export async function checkRedirectError() {
+    try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+            // Sucesso! O user voltou do Google.
+            // Não precisamos fazer nada, o monitorAuthState vai apanhar.
+        }
+    } catch (error) {
+        // AQUI ESTÁ O ERRO SILENCIOSO
+        alert("ERRO AO VOLTAR DO GOOGLE:\n" + error.message);
+    }
 }
