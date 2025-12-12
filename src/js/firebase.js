@@ -1,3 +1,4 @@
+// src/js/firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -11,7 +12,8 @@ const firebaseConfig = {
     measurementId: "G-QE23KDSLS5"
 };
 
+// Iniciar a App
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
 
-console.log("🔥 Firebase Firestore ligado!");
+// Exportar a referência da BD
+export const db = getFirestore(app);
