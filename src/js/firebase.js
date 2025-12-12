@@ -4,7 +4,7 @@ import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/
 
 const firebaseConfig = {
     apiKey: "AIzaSyAfjc7Z0U4w7HRJUJuYVpMnqhozcZMHgww",
-    authDomain: "cookit-83f40.firebaseapp.com",
+    authDomain: "cookit-83f40.web.app",
     projectId: "cookit-83f40",
     storageBucket: "cookit-83f40.firebasestorage.app",
     messagingSenderId: "620804753444",
