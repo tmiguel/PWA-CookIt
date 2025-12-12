@@ -1,6 +1,6 @@
-// src/js/firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAfjc7Z0U4w7HRJUJuYVpMnqhozcZMHgww",
@@ -12,8 +12,7 @@ const firebaseConfig = {
     measurementId: "G-QE23KDSLS5"
 };
 
-// Iniciar a App
 const app = initializeApp(firebaseConfig);
-
-// Exportar a referência da BD
 export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
