@@ -1,85 +1,84 @@
-// 1. Importar Firebase (AGORA ATIVO)
-import { db } from './firebase.js';
-
-// 2. Importar Templates
 import { headerTemplate } from './templates/header.js';
 import { bottomNavTemplate } from './templates/bottom-nav.js';
 import { shoppingListTemplate } from './templates/shopping-list.js';
 import { recipesTemplate } from './templates/recipes.js';
 import { settingsTemplate } from './templates/settings.js';
-
-// Sub-páginas
 import { tagsTemplate } from './templates/tags.js';
 import { unitsTemplate } from './templates/units.js';
 import { areasTemplate } from './templates/areas.js';
+import * as TagService from './services/tags-service.js';
+import * as UnitService from './services/units-service.js';
+import * as AreaService from './services/areas-service.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // A. Esconder Loader
     const loader = document.getElementById('app-loader');
     if (loader) setTimeout(() => loader.classList.add('hidden'), 500);
 
-    // B. Renderizar Base
-    const headerContainer = document.getElementById('header-container');
-    const navContainer = document.getElementById('bottom-nav-container');
     const mainContainer = document.getElementById('main-container');
+    document.getElementById('header-container').innerHTML = headerTemplate;
+    document.getElementById('bottom-nav-container').innerHTML = bottomNavTemplate;
 
-    if (headerContainer) headerContainer.innerHTML = headerTemplate;
-    if (navContainer) navContainer.innerHTML = bottomNavTemplate;
-
-    // C. Função Navegar
-    const setView = (template) => {
-        if (mainContainer) mainContainer.innerHTML = template;
-        bindEvents(template);
+    const setView = (tpl) => {
+        if (mainContainer) mainContainer.innerHTML = tpl;
+        bindEvents(tpl);
     };
 
-    // D. Eventos e Lógica
-    const bindEvents = (currentTemplate) => {
+    // Função CRUD Genérica (Serve para Tags, Unidades e Áreas)
+    const setupGenericCrud = (service) => {
+        document.getElementById('btn-back-settings').onclick = () => setView(settingsTemplate);
         
-        // --- MENU PRINCIPAL ---
-        const btnShopping = document.getElementById('nav-shopping');
-        const btnRecipes = document.getElementById('nav-recipes');
-        const btnSettings = document.getElementById('nav-settings');
+        const listEl = document.getElementById('list-container');
+        const inputCode = document.getElementById('input-code');
+        const inputName = document.getElementById('input-name');
+        const btnAdd = document.getElementById('btn-add');
+        const errorMsg = document.getElementById('error-msg');
 
-        if (btnShopping) btnShopping.onclick = () => setView(shoppingListTemplate);
-        if (btnRecipes) btnRecipes.onclick = () => setView(recipesTemplate);
-        if (btnSettings) btnSettings.onclick = () => setView(settingsTemplate);
+        const render = async () => {
+            listEl.innerHTML = '<li style="text-align:center; padding:10px;">A atualizar...</li>';
+            try {
+                const items = await service['get' + service.name](); // Ex: getTags
+                listEl.innerHTML = items.length ? '' : '<li style="text-align:center; padding:20px;">Vazio.</li>';
+                
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'manage-item';
+                    li.innerHTML = `<div style="flex:1;"><strong style="color:var(--primary-color);">[${item.code}]</strong> ${item.name || ''}</div><button class="del-btn" style="color:red;border:none;background:none;">🗑️</button>`;
+                    li.querySelector('.del-btn').onclick = async () => { if(confirm('Apagar?')) { await service['delete' + service.name.slice(0,-1)](item.id); render(); }};
+                    listEl.appendChild(li);
+                });
+            } catch (e) { listEl.innerHTML = 'Erro ao carregar.'; }
+        };
 
-        // --- PÁGINA CONFIGURAÇÕES ---
-        if (currentTemplate === settingsTemplate) {
-            const btnTags = document.getElementById('btn-manage-tags');
-            const btnUnits = document.getElementById('btn-manage-units');
-            const btnAreas = document.getElementById('btn-manage-areas');
-
-            if (btnTags) btnTags.onclick = () => setView(tagsTemplate);
-            if (btnUnits) btnUnits.onclick = () => setView(unitsTemplate);
-            if (btnAreas) btnAreas.onclick = () => setView(areasTemplate);
-        }
-
-        // --- SUB-PÁGINA: TAGS (TESTE DE CONEXÃO) ---
-        if (currentTemplate === tagsTemplate) {
-            const container = document.getElementById('tags-container');
-            const btnBack = document.getElementById('btn-back-settings-tags');
-            
-            // Teste Visual: Se 'db' existir, mostrar sucesso
-            if (db) {
-                container.innerHTML = `<p style="color:green; font-weight:bold;">🔥 Firestore Ligado!</p>`;
-                console.log("Firestore Object:", db);
-            } else {
-                container.innerHTML = `<p style="color:red;">Erro na conexão.</p>`;
-            }
-
-            if (btnBack) btnBack.onclick = () => setView(settingsTemplate);
-        }
-
-        // --- OUTRAS SUB-PÁGINAS ---
-        if (currentTemplate === unitsTemplate) {
-            document.getElementById('btn-back-settings-units').onclick = () => setView(settingsTemplate);
-        }
-        if (currentTemplate === areasTemplate) {
-            document.getElementById('btn-back-settings-areas').onclick = () => setView(settingsTemplate);
-        }
+        btnAdd.onclick = async () => {
+            errorMsg.style.display = 'none';
+            btnAdd.disabled = true;
+            try {
+                await service['add' + service.name.slice(0,-1)](inputCode.value, inputName.value);
+                inputCode.value = ''; inputName.value = ''; render();
+            } catch (e) { errorMsg.innerText = e.message; errorMsg.style.display = 'block'; }
+            finally { btnAdd.disabled = false; }
+        };
+        render();
     };
 
-    // Iniciar na Configuração
+    const bindEvents = (tpl) => {
+        const nav = (id, t) => { const el = document.getElementById(id); if(el) el.onclick = () => setView(t); };
+        
+        nav('nav-shopping', shoppingListTemplate);
+        nav('nav-recipes', recipesTemplate);
+        nav('nav-settings', settingsTemplate);
+
+        if (tpl === settingsTemplate) {
+            nav('btn-manage-tags', tagsTemplate);
+            nav('btn-manage-units', unitsTemplate);
+            nav('btn-manage-areas', areasTemplate);
+        }
+
+        // Configuração dinâmica dos serviços
+        if (tpl === tagsTemplate) setupGenericCrud({ ...TagService, name: 'Tags' });
+        if (tpl === unitsTemplate) setupGenericCrud({ ...UnitService, name: 'Units' });
+        if (tpl === areasTemplate) setupGenericCrud({ ...AreaService, name: 'Areas' });
+    };
+
     setView(settingsTemplate);
 });
