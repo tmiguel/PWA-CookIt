@@ -1,4 +1,5 @@
-// import { db } from './firebase.js'; // ❌ DESLIGADO (Causa do erro)
+// 1. Importar Firebase (AGORA ATIVO)
+import { db } from './firebase.js';
 
 import { headerTemplate } from './templates/header.js';
 import { bottomNavTemplate } from './templates/bottom-nav.js';
