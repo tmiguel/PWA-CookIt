@@ -1,13 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>SITE RESETADO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CookIt PWA</title>
+    <!-- Caminho relativo para CSS -->
+    <link rel="stylesheet" href="./src/styles.css">
 </head>
 <body>
-    <h1>INFRAESTRUTURA OK - 
-        PRONTO PARA NOVO FRONTEND -
-        novo teste de deploy
-    </h1>
+    <div id="app">
+        <!-- Header Container -->
+        <div id="header-container"></div>
+
+        <!-- Conteúdo Dinâmico -->
+        <main id="main-container">
+            <p style="text-align:center; margin-top:50px; color:#666;">
+                A carregar CookIt...
+            </p>
+        </main>
+
+        <!-- Menu Container -->
+        <div id="bottom-nav-container"></div>
+    </div>
+
+    <!-- Caminho relativo para JS (Module) -->
+    <script type="module" src="./src/js/main.js"></script>
 </body>
 </html>
