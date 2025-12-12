@@ -6,7 +6,7 @@ name: Deploy to Firebase Hosting
 on:
   push:
     branches:
-      - main # A branch que irá desencadear o deploy (mude se usar outra)
+      - main # A branch que irá desencadear o deploy
 
 jobs:
   build_and_deploy:
@@ -15,15 +15,19 @@ jobs:
       # 1. Faz o checkout do código do repositório
       - uses: actions/checkout@v3
 
-      # 2. Ação de Deploy para o Firebase
+      # 2. NOVO PASSO: Copiar ficheiros de infraestrutura para a RAIZ
+      # O deploy action precisa do firebase.json na raiz para iniciar.
+      - name: Copy Firebase Config to Root
+        run: |
+          cp infra/firebase.json .
+          cp infra/firestore.rules . # Opcional: Copia também as regras de segurança
+          
+      # 3. Ação de Deploy para o Firebase
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          # CORREÇÃO: Passa o caminho da pasta de configuração
+          # Agora o firebase.json está na raiz do workspace, o Action encontra-o.
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_COOKIT }}
           projectId: cookit-83f40 # O ID do seu projeto Firebase
           channelId: live # O canal de deploy (produção)
-          
-          # NOVO: Indica o caminho da pasta de configuração e do ficheiro firebase.json
-          configId: infra/firebase.json
