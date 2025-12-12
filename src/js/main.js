@@ -8,64 +8,68 @@ import { tagsTemplate } from './templates/tags.js';
 import { unitsTemplate } from './templates/units.js';
 import { areasTemplate } from './templates/areas.js';
 
-// Adicionei checkRedirectError
-import { monitorAuthState, loginWithGoogle, logout, checkRedirectError } from './services/auth-service.js';
+// Auth
+import { monitorAuthState, loginWithGoogle, logout, finishRedirectLogin } from './services/auth-service.js';
+
+// Services CRUD
 import * as TagService from './services/tags-service.js';
 import * as UnitService from './services/units-service.js';
 import * as AreaService from './services/areas-service.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Verificar se houve erro no regresso do Google
-    checkRedirectError();
+document.addEventListener('DOMContentLoaded', async () => {
+    
+    // 1. Processar regresso do Google (se houver)
+    // Isto desbloqueia o estado se estiver pendente
+    finishRedirectLogin();
 
     const loader = document.getElementById('app-loader');
-    
-    // Elementos Base
     const headerContainer = document.getElementById('header-container');
     const navContainer = document.getElementById('bottom-nav-container');
     const mainContainer = document.getElementById('main-container');
 
-    // --- MODO DEBUG VISUAL (Para vermos o estado no telemóvel) ---
-    // Se o loader existir, vamos escrever nele para saberes o estado
-    if(loader) {
-        loader.innerHTML += `<p style="color:white; margin-top:10px; font-size:12px;">Estado: A aguardar Firebase...</p>`;
-    }
+    // Timeout de Segurança: Se em 5 segundos nada acontecer, força o login
+    // Isto evita ficar preso no logo para sempre
+    setTimeout(() => {
+        if (loader && !loader.classList.contains('hidden')) {
+            console.warn("Timeout de carga. A forçar UI.");
+            // Se o Firebase demorar muito, assumimos que não está logado
+            if (!headerContainer.innerHTML) showLoginScreen(); 
+        }
+    }, 5000);
 
     const setView = (template) => {
         if (mainContainer) mainContainer.innerHTML = template;
         bindEvents(template);
     };
 
-    // --- GESTÃO DE ESTADO ---
-    monitorAuthState((user) => {
+    // Função auxiliar para mostrar login
+    const showLoginScreen = () => {
+        if (loader) loader.classList.add('hidden');
+        headerContainer.innerHTML = '';
+        navContainer.innerHTML = '';
+        mainContainer.innerHTML = loginTemplate;
         
+        const btn = document.getElementById('btn-google-login');
+        if (btn) btn.onclick = loginWithGoogle;
+    };
+
+    // 2. Monitorizar Estado (Onde a magia acontece)
+    monitorAuthState((user) => {
+        if (loader) loader.classList.add('hidden');
+
         if (!user) {
-            // UTILIZADOR NÃO LOGADO
-            if(loader) {
-                // Se ainda estamos no loader, atualiza msg
-                loader.innerHTML = `<p style="color:white; margin-top:20px;">Não autenticado. A mostrar login...</p>`;
-                setTimeout(() => loader.classList.add('hidden'), 500);
-            } else {
-                // Se já não há loader, força login
-                mainContainer.innerHTML = loginTemplate;
-                headerContainer.innerHTML = '';
-                navContainer.innerHTML = '';
-            }
-
-            const btnLogin = document.getElementById('btn-google-login');
-            if (btnLogin) btnLogin.onclick = loginWithGoogle;
-
+            // --- NÃO LOGADO ---
+            showLoginScreen();
         } else {
-            // UTILIZADOR LOGADO
-            if(loader) loader.classList.add('hidden'); // Esconde loader imediatamente
+            // --- LOGADO ---
+            console.log("Utilizador:", user.email);
             
-            console.log("Logado:", user.email);
-            
+            // Renderizar Layout
             headerContainer.innerHTML = headerTemplate;
             navContainer.innerHTML = bottomNavTemplate;
 
-            // Se for a primeira carga, vai para Receitas
-            if (mainContainer.innerHTML === '' || mainContainer.innerHTML.includes('Entrar com Google')) {
+            // Se for a primeira vez, carrega Receitas
+            if (!mainContainer.innerHTML || mainContainer.innerHTML.includes('Entrar com Google')) {
                 setView(recipesTemplate);
             }
         }
@@ -93,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     listEl.appendChild(li);
                 });
             } catch (e) { 
-                listEl.innerHTML = `<li style="color:red; padding:15px;">Erro BD: ${e.message}</li>`; 
+                listEl.innerHTML = `<li style="color:red; padding:15px;">Erro: ${e.message}</li>`; 
             }
         };
 
@@ -121,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
             nav('btn-manage-units', unitsTemplate);
             nav('btn-manage-areas', areasTemplate);
             
-            // Logout
             const btnLogout = document.getElementById('btn-logout');
             if (btnLogout) btnLogout.onclick = () => { if(confirm("Sair?")) logout(); };
         }
