@@ -1,22 +1,12 @@
+/* src/styles.css */
+
 :root {
     /* --- PALETA OPÇÃO B (Dark Chef) --- */
-    
-    /* Laranja Queimado (Destaque/Ação) */
     --primary-color: #E67E22; 
-    
-    /* Fundo Principal (Quase preto, não preto absoluto para não cansar) */
     --bg-color: #1E272E; 
-    
-    /* Superfícies (Header/Menu - Cinza escuro) */
     --surface-color: #2D3436; 
-    
-    /* Texto Principal (Branco Suave) */
     --text-color: #F5F6FA; 
-    
-    /* Texto Secundário (Cinza) */
     --text-light: #B2BEC3; 
-    
-    /* Bordas subtis */
     --border-color: #353b48; 
 
     /* Dimensões */
@@ -30,14 +20,16 @@
     margin: 0;
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    -webkit-tap-highlight-color: transparent; /* Remove flash azul no toque em mobile */
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    height: 100vh;
-    overflow: hidden; /* O scroll é interno */
+    /* Altura dinâmica para corrigir bug no Mobile Safari/Chrome */
+    height: 100dvh;
+    height: -webkit-fill-available; 
+    overflow: hidden; 
 }
 
 /* App Shell Layout */
@@ -45,17 +37,16 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
-    max-width: 600px; /* Em desktop fica tipo telemóvel ao centro */
-    margin: 0 auto;
+    width: 100%;
     background-color: var(--bg-color);
-    position: relative; /* Para posicionamento absoluto se necessário */
 }
 
 /* Conteúdo do Meio */
 #main-container {
-    flex: 1; /* Ocupa todo o espaço disponível */
-    overflow-y: auto; /* Scroll aqui */
-    padding: 20px;
+    flex: 1;
+    overflow-y: auto; /* Scroll apenas aqui dentro */
+    /* Padding extra em baixo para o conteúdo não ficar escondido atrás do menu fixo */
+    padding: 20px 20px 80px 20px; 
 }
 
 /* Header */
@@ -71,16 +62,28 @@ body {
     font-size: 1.3rem;
     letter-spacing: 1px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-/* Bottom Navigation */
+/* Bottom Navigation (FIXA) */
 .bottom-nav {
+    position: fixed; /* Força a ficar no ecrã */
+    bottom: 0;
+    left: 0;
+    width: 100%;
     height: var(--nav-height);
-    background-color: var(--surface-color); /* Mesma cor do header/cartões */
+    
+    background-color: var(--surface-color);
     border-top: 1px solid var(--border-color);
+    
     display: flex;
     justify-content: space-around;
     align-items: center;
+    
+    z-index: 1000; /* Garante que fica por cima de tudo */
+    padding-bottom: env(safe-area-inset-bottom); /* Respeito ao iPhone X+ */
 }
 
 .bottom-nav__item {
@@ -90,7 +93,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: var(--text-light); /* Cinza quando inativo */
+    color: var(--text-light);
     font-size: 0.7rem;
     cursor: pointer;
     width: 100%;
@@ -100,10 +103,9 @@ body {
 
 .bottom-nav__item:hover,
 .bottom-nav__item:active {
-    color: var(--text-color); /* Fica branco ao tocar */
+    color: var(--primary-color);
 }
 
-/* Ícones */
 .bottom-nav__icon {
     font-size: 1.4rem;
     margin-bottom: 4px;
