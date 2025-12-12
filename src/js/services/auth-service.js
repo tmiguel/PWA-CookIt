@@ -1,17 +1,17 @@
 import { auth, googleProvider } from '../firebase.js';
 import { 
-    signInWithPopup, // <--- Voltamos ao Popup
+    signInWithRedirect, 
     signOut, 
-    onAuthStateChanged 
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 export async function loginWithGoogle() {
     try {
-        // Usa Popup em vez de Redirect
-        await signInWithPopup(auth, googleProvider);
+        // Usa Redirect (Melhor para Telemóvel)
+        await signInWithRedirect(auth, googleProvider);
     } catch (error) {
         console.error("Erro Login:", error);
-        alert("Erro no Login: " + error.message);
+        alert("Erro ao iniciar: " + error.message);
     }
 }
 
