@@ -1,29 +1,62 @@
 import { headerTemplate } from './templates/header.js';
 import { bottomNavTemplate } from './templates/bottom-nav.js';
+import { loginTemplate } from './templates/login.js';
 import { shoppingListTemplate } from './templates/shopping-list.js';
 import { recipesTemplate } from './templates/recipes.js';
 import { settingsTemplate } from './templates/settings.js';
 import { tagsTemplate } from './templates/tags.js';
 import { unitsTemplate } from './templates/units.js';
 import { areasTemplate } from './templates/areas.js';
+
+// Serviços
+import { monitorAuthState, loginWithGoogle } from './services/auth-service.js';
 import * as TagService from './services/tags-service.js';
 import * as UnitService from './services/units-service.js';
 import * as AreaService from './services/areas-service.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('app-loader');
-    if (loader) setTimeout(() => loader.classList.add('hidden'), 500);
-
+    const appContainer = document.getElementById('app');
+    
+    // Containers Principais
+    const headerContainer = document.getElementById('header-container');
+    const navContainer = document.getElementById('bottom-nav-container');
     const mainContainer = document.getElementById('main-container');
-    document.getElementById('header-container').innerHTML = headerTemplate;
-    document.getElementById('bottom-nav-container').innerHTML = bottomNavTemplate;
 
-    const setView = (tpl) => {
-        if (mainContainer) mainContainer.innerHTML = tpl;
-        bindEvents(tpl);
+    // --- FUNÇÃO CENTRAL DE NAVEGAÇÃO ---
+    const setView = (template) => {
+        if (mainContainer) mainContainer.innerHTML = template;
+        bindEvents(template);
     };
 
-    // Função CRUD Genérica (Serve para Tags, Unidades e Áreas)
+    // --- GESTÃO DE ESTADO (LOGIN vs APP) ---
+    monitorAuthState((user) => {
+        // Esconder loader assim que o Firebase responde
+        if (loader) loader.classList.add('hidden');
+
+        if (!user) {
+            // A. UTILIZADOR NÃO LOGADO -> Mostrar Login
+            headerContainer.innerHTML = '';
+            navContainer.innerHTML = '';
+            mainContainer.innerHTML = loginTemplate;
+            
+            const btnLogin = document.getElementById('btn-google-login');
+            if (btnLogin) btnLogin.onclick = loginWithGoogle;
+
+        } else {
+            // B. UTILIZADOR LOGADO -> Mostrar App
+            console.log("Logado como:", user.email);
+            
+            // Injetar Layout Fixo
+            headerContainer.innerHTML = headerTemplate;
+            navContainer.innerHTML = bottomNavTemplate;
+
+            // Iniciar na Lista de Compras ou onde preferires
+            setView(recipesTemplate); 
+        }
+    });
+
+    // --- LÓGICA DA APLICAÇÃO (IGUAL AO ANTERIOR) ---
     const setupGenericCrud = (service) => {
         document.getElementById('btn-back-settings').onclick = () => setView(settingsTemplate);
         
@@ -36,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const render = async () => {
             listEl.innerHTML = '<li style="text-align:center; padding:10px;">A atualizar...</li>';
             try {
-                const items = await service['get' + service.name](); // Ex: getTags
+                const items = await service['get' + service.name]();
                 listEl.innerHTML = items.length ? '' : '<li style="text-align:center; padding:20px;">Vazio.</li>';
                 
                 items.forEach(item => {
@@ -46,7 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     li.querySelector('.del-btn').onclick = async () => { if(confirm('Apagar?')) { await service['delete' + service.name.slice(0,-1)](item.id); render(); }};
                     listEl.appendChild(li);
                 });
-            } catch (e) { listEl.innerHTML = 'Erro ao carregar.'; }
+            } catch (e) { 
+                console.error(e);
+                listEl.innerHTML = `<li style="color:red; padding:15px;">Erro: ${e.message}</li>`; 
+            }
         };
 
         btnAdd.onclick = async () => {
@@ -64,21 +100,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const bindEvents = (tpl) => {
         const nav = (id, t) => { const el = document.getElementById(id); if(el) el.onclick = () => setView(t); };
         
+        // Menu Principal
         nav('nav-shopping', shoppingListTemplate);
         nav('nav-recipes', recipesTemplate);
         nav('nav-settings', settingsTemplate);
 
+        // Sub-menus Configuração
         if (tpl === settingsTemplate) {
             nav('btn-manage-tags', tagsTemplate);
             nav('btn-manage-units', unitsTemplate);
             nav('btn-manage-areas', areasTemplate);
         }
 
-        // Configuração dinâmica dos serviços
+        // Lógica CRUD
         if (tpl === tagsTemplate) setupGenericCrud({ ...TagService, name: 'Tags' });
         if (tpl === unitsTemplate) setupGenericCrud({ ...UnitService, name: 'Units' });
         if (tpl === areasTemplate) setupGenericCrud({ ...AreaService, name: 'Areas' });
     };
-
-    setView(settingsTemplate);
 });
