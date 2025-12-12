@@ -5,6 +5,12 @@ import { recipesTemplate } from './templates/recipes.js';
 import { settingsTemplate } from './templates/settings.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    const loader = document.getElementById('app-loader');
+    
+    setTimeout(() => {
+        if (loader) loader.classList.add('hidden');
+    }, 1000);
+
     const headerContainer = document.getElementById('header-container');
     const navContainer = document.getElementById('bottom-nav-container');
     const mainContainer = document.getElementById('main-container');
@@ -16,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mainContainer) mainContainer.innerHTML = template;
     };
 
-    setView(shoppingListTemplate);
+    setView(recipesTemplate);
 
     const btnShopping = document.getElementById('nav-shopping');
     const btnRecipes = document.getElementById('nav-recipes');
