@@ -7,9 +7,9 @@ import { shoppingListTemplate } from './templates/shopping-list.js';
 import { recipesTemplate } from './templates/recipes.js';
 import { settingsTemplate } from './templates/settings.js';
 
-// import { tagsTemplate } from './templates/tags.js'; // ❌ DESLIGADO
-// import { unitsTemplate } from './templates/units.js'; // ❌ DESLIGADO
-// import { areasTemplate } from './templates/areas.js'; // ❌ DESLIGADO
+import { tagsTemplate } from './templates/tags.js'; // ❌ DESLIGADO
+import { unitsTemplate } from './templates/units.js'; // ❌ DESLIGADO
+import { areasTemplate } from './templates/areas.js'; // ❌ DESLIGADO
 
 document.addEventListener('DOMContentLoaded', () => {
     // Tentar esconder o loader
