@@ -19,8 +19,8 @@ jobs:
       # O deploy action precisa do firebase.json na raiz para iniciar.
       - name: Copy Firebase Config to Root
         run: |
-          cp infra/firebase.json .
-          cp infra/firestore.rules . # Opcional: Copia também as regras de segurança
+          cp Infra/firebase.json .
+          cp Infra/firestore.rules . # Opcional: Copia também as regras de segurança
           
       # 3. Ação de Deploy para o Firebase
       - name: Deploy to Firebase
