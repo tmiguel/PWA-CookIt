@@ -5,8 +5,16 @@ export const tagsTemplate = `
         <h2 style="margin:0; flex:1; text-align:center;">Gerir Tags</h2>
         <div style="width:24px;"></div>
     </div>
-    <div id="tags-container" style="margin-top:20px; text-align:center; color:#888;">
-        A carregar tags do Firestore...
+
+    <!-- Área de Adicionar -->
+    <div style="display:flex; gap:10px; margin-top:20px;">
+        <input type="text" id="input-new-tag" class="input-field" placeholder="Nova tag (ex: Almoço)">
+        <button id="btn-add-tag" style="background:var(--primary-color); color:white; border:none; padding:0 15px; border-radius:8px; font-weight:bold;">OK</button>
     </div>
+
+    <!-- Lista de Tags -->
+    <ul id="tags-list" class="manage-list">
+        <li style="text-align:center; padding:20px; color:#888;">A carregar...</li>
+    </ul>
 </div>
 `;
