@@ -47,3 +47,285 @@ body {
 
 #main-container {
     flex: 1;
+    overflow-y: auto; /* Scroll acontece aqui */
+    padding: 20px;
+    /* Espaço extra em baixo para o conteúdo não ficar atrás do menu fixo */
+    padding-bottom: 90px; 
+}
+
+/* --- HEADER --- */
+.header {
+    height: var(--header-height);
+    background-color: var(--surface-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Afasta Brand do Logout */
+    padding: 0 15px;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Grupo Logótipo + Texto */
+.header__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* A CORREÇÃO: Força o ícone a ser pequeno */
+.header__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.header__logo {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+}
+
+/* Botão Logout */
+.header__logout {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.header__logout:active {
+    background-color: var(--border-color);
+    color: var(--danger-color);
+}
+
+/* --- BOTTOM NAVIGATION (Fixa) --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--nav-height);
+    background-color: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    padding-bottom: env(safe-area-inset-bottom); /* Respeita iPhone X+ */
+}
+
+@media (min-width: 600px) {
+    .bottom-nav {
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 600px;
+        border-left: 1px solid var(--border-color);
+        border-right: 1px solid var(--border-color);
+    }
+}
+
+.bottom-nav__item {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-size: 0.7rem;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    transition: color 0.3s ease;
+}
+
+.bottom-nav__item:hover,
+.bottom-nav__item:active {
+    color: var(--primary-color);
+}
+
+.bottom-nav__icon {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+}
+
+/* --- LOADING SCREEN --- */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+.loader-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-icon {
+    width: 80px;
+    height: 80px;
+    animation: pulse 1.5s infinite ease-in-out;
+    border-radius: 50%;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- COMPONENTES GERAIS (Botões, Inputs, Cards) --- */
+
+.page-content h1, 
+.page-content h2 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+/* Botão Flutuante (FAB) */
+.fab-btn {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    transition: transform 0.2s;
+}
+
+.fab-btn:active {
+    transform: scale(0.9);
+}
+
+@media (min-width: 600px) {
+    .fab-btn {
+        right: calc(50% - 280px);
+    }
+}
+
+/* Inputs de Texto */
+.input-field {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--text-color);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+.input-field:focus {
+    border-color: var(--primary-color);
+}
+
+.input-field::placeholder {
+    color: #636e72;
+}
+
+/* Headers de Formulários (Botão Voltar + Título) */
+.form-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-header button {
+    color: var(--text-color);
+    padding: 5px 10px;
+    margin-left: -10px;
+}
+
+/* --- SETTINGS MENU --- */
+.settings-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.settings-item {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    padding: 16px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color);
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.settings-item:active {
+    background-color: var(--border-color);
+    transform: scale(0.98);
+}
+
+/* --- LISTAS DE GESTÃO (CRUD) --- */
+.manage-list {
+    list-style: none;
+    margin-top: 20px;
+}
+
+.manage-item {
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.manage-item:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.manage-item:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.del-btn {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    font-size: 1.2rem;
+    padding: 8px;
+    cursor: pointer;
+}
