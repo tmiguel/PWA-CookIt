@@ -1,43 +1,16 @@
 {
-  "project": "cookit-83f40", 
-  
   "hosting": {
-    "public": ".",
+    "public": "../src", 
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules"
+      "**/node_modules/**"
     ],
     "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"
       }
-    ],
-    "headers": [
-      {
-        "source": "**/*.@(js|css|png|jpg|gif|svg)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=31536000, public, immutable"
-          }
-        ]
-      },
-      {
-        "source": "/index.html",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=600, public, must-revalidate"
-          }
-        ]
-      }
     ]
-  },
-  "firestore": {
-    "rules": "firestore.rules"
-  },
-  "storage": {},
-  "emulators": {}
+  }
 }
