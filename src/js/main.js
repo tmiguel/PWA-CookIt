@@ -1,26 +1,22 @@
-// 1. Importar Firebase
-import { db } from './firebase.js';
+// --- TESTE DE SEGURANÇA ---
+// import { db } from './firebase.js'; // ❌ DESLIGADO TEMPORARIAMENTE
 
-// 2. Importar Templates (Apenas os que tens na pasta)
 import { headerTemplate } from './templates/header.js';
 import { bottomNavTemplate } from './templates/bottom-nav.js';
 import { shoppingListTemplate } from './templates/shopping-list.js';
 import { recipesTemplate } from './templates/recipes.js';
 import { settingsTemplate } from './templates/settings.js';
 
-// Páginas de Configuração
-import { tagsTemplate } from './templates/tags.js';
-import { unitsTemplate } from './templates/units.js';
-import { areasTemplate } from './templates/areas.js';
+// import { tagsTemplate } from './templates/tags.js'; // ❌ DESLIGADO
+// import { unitsTemplate } from './templates/units.js'; // ❌ DESLIGADO
+// import { areasTemplate } from './templates/areas.js'; // ❌ DESLIGADO
 
 document.addEventListener('DOMContentLoaded', () => {
-    // A. Gerir Loader
+    // Tentar esconder o loader
     const loader = document.getElementById('app-loader');
-    setTimeout(() => { 
-        if (loader) loader.classList.add('hidden'); 
-    }, 800);
+    if (loader) loader.classList.add('hidden');
 
-    // B. Renderizar Estrutura Base
+    // Renderizar App
     const headerContainer = document.getElementById('header-container');
     const navContainer = document.getElementById('bottom-nav-container');
     const mainContainer = document.getElementById('main-container');
@@ -28,13 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (headerContainer) headerContainer.innerHTML = headerTemplate;
     if (navContainer) navContainer.innerHTML = bottomNavTemplate;
 
-    // C. Função de Navegação
     const setView = (template) => {
         if (mainContainer) mainContainer.innerHTML = template;
-        bindEvents(template);
+        
+        // Re-ligar eventos básicos
+        const btnShopping = document.getElementById('nav-shopping');
+        const btnRecipes = document.getElementById('nav-recipes');
+        const btnSettings = document.getElementById('nav-settings');
+
+        if (btnShopping) btnShopping.onclick = () => setView(shoppingListTemplate);
+        if (btnRecipes) btnRecipes.onclick = () => setView(recipesTemplate);
+        if (btnSettings) btnSettings.onclick = () => setView(settingsTemplate);
     };
 
-    // D. Ligar os Eventos
-    const bindEvents = (currentTemplate) => {
-        
-        // --- EVENTOS
+    setView(settingsTemplate);
+});
