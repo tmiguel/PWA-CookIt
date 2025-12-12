@@ -3,14 +3,27 @@ import {
     signInWithRedirect, 
     signOut, 
     onAuthStateChanged,
-    getRedirectResult // <--- NOVO
+    getRedirectResult // <--- Importante
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+// Iniciar Login
 export async function loginWithGoogle() {
     try {
         await signInWithRedirect(auth, googleProvider);
     } catch (error) {
-        alert("Erro ao iniciar: " + error.message);
+        console.error("Erro no redirect:", error);
+        alert("Erro: " + error.message);
+    }
+}
+
+// Finalizar Login (Processar regresso)
+export async function finishRedirectLogin() {
+    try {
+        // O Firebase verifica se viemos do Google agora
+        await getRedirectResult(auth);
+    } catch (error) {
+        console.error("Erro ao voltar do Google:", error);
+        alert("Falha na autenticação: " + error.message);
     }
 }
 
@@ -27,19 +40,4 @@ export function monitorAuthState(callback) {
     onAuthStateChanged(auth, (user) => {
         callback(user);
     });
-}
-
-// --- NOVA FUNÇÃO PARA DEBUG ---
-// Verifica se acabámos de voltar do Google e se houve erro
-export async function checkRedirectError() {
-    try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-            // Sucesso! O user voltou do Google.
-            // Não precisamos fazer nada, o monitorAuthState vai apanhar.
-        }
-    } catch (error) {
-        // AQUI ESTÁ O ERRO SILENCIOSO
-        alert("ERRO AO VOLTAR DO GOOGLE:\n" + error.message);
-    }
 }
