@@ -1,9 +1,28 @@
-import{headerTemplate}from'./templates/header.js';import{bottomNavTemplate}from'./templates/bottom-nav.js';import{shoppingListTemplate}from'./templates/shopping-list.js';import{recipesTemplate}from'./templates/recipes.js';import{settingsTemplate}from'./templates/settings.js';
-const $=id=>document.getElementById(id);const setView=tpl=>$('main-container').innerHTML=tpl;
-document.addEventListener('DOMContentLoaded',()=>{
-$('header-container').innerHTML=headerTemplate;$('bottom-nav-container').innerHTML=bottomNavTemplate;
-setView(shoppingListTemplate);
-$('nav-shopping').onclick=()=>setView(shoppingListTemplate);
-$('nav-recipes').onclick=()=>setView(recipesTemplate);
-$('nav-settings').onclick=()=>setView(settingsTemplate);
+import { headerTemplate } from './templates/header.js';
+import { bottomNavTemplate } from './templates/bottom-nav.js';
+import { shoppingListTemplate } from './templates/shopping-list.js';
+import { recipesTemplate } from './templates/recipes.js';
+import { settingsTemplate } from './templates/settings.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+    const headerContainer = document.getElementById('header-container');
+    const navContainer = document.getElementById('bottom-nav-container');
+    const mainContainer = document.getElementById('main-container');
+
+    if (headerContainer) headerContainer.innerHTML = headerTemplate;
+    if (navContainer) navContainer.innerHTML = bottomNavTemplate;
+
+    const setView = (template) => {
+        if (mainContainer) mainContainer.innerHTML = template;
+    };
+
+    setView(shoppingListTemplate);
+
+    const btnShopping = document.getElementById('nav-shopping');
+    const btnRecipes = document.getElementById('nav-recipes');
+    const btnSettings = document.getElementById('nav-settings');
+
+    if (btnShopping) btnShopping.onclick = () => setView(shoppingListTemplate);
+    if (btnRecipes) btnRecipes.onclick = () => setView(recipesTemplate);
+    if (btnSettings) btnSettings.onclick = () => setView(settingsTemplate);
 });
