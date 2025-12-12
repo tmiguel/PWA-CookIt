@@ -8,18 +8,13 @@ import { tagsTemplate } from './templates/tags.js';
 import { unitsTemplate } from './templates/units.js';
 import { areasTemplate } from './templates/areas.js';
 
-// Auth
+// Auth e Services
 import { monitorAuthState, loginWithGoogle, logout, finishRedirectLogin } from './services/auth-service.js';
-
-// Services CRUD
 import * as TagService from './services/tags-service.js';
 import * as UnitService from './services/units-service.js';
 import * as AreaService from './services/areas-service.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-    
-    // 1. Processar regresso do Google (se houver)
-    // Isto desbloqueia o estado se estiver pendente
+document.addEventListener('DOMContentLoaded', () => {
     finishRedirectLogin();
 
     const loader = document.getElementById('app-loader');
@@ -27,12 +22,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const navContainer = document.getElementById('bottom-nav-container');
     const mainContainer = document.getElementById('main-container');
 
-    // Timeout de Segurança: Se em 5 segundos nada acontecer, força o login
-    // Isto evita ficar preso no logo para sempre
+    // Timeout de segurança
     setTimeout(() => {
         if (loader && !loader.classList.contains('hidden')) {
-            console.warn("Timeout de carga. A forçar UI.");
-            // Se o Firebase demorar muito, assumimos que não está logado
             if (!headerContainer.innerHTML) showLoginScreen(); 
         }
     }, 5000);
@@ -42,7 +34,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         bindEvents(template);
     };
 
-    // Função auxiliar para mostrar login
     const showLoginScreen = () => {
         if (loader) loader.classList.add('hidden');
         headerContainer.innerHTML = '';
@@ -53,28 +44,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (btn) btn.onclick = loginWithGoogle;
     };
 
-    // 2. Monitorizar Estado (Onde a magia acontece)
+    // --- MONITOR DE ESTADO ---
     monitorAuthState((user) => {
         if (loader) loader.classList.add('hidden');
 
         if (!user) {
-            // --- NÃO LOGADO ---
             showLoginScreen();
         } else {
-            // --- LOGADO ---
-            console.log("Utilizador:", user.email);
-            
-            // Renderizar Layout
+            // Renderizar Shell
             headerContainer.innerHTML = headerTemplate;
             navContainer.innerHTML = bottomNavTemplate;
 
-            // Se for a primeira vez, carrega Receitas
-            if (!mainContainer.innerHTML || mainContainer.innerHTML.includes('Entrar com Google')) {
+            // --- LIGAR LOGOUT NO HEADER (NOVO) ---
+            const btnHeaderLogout = document.getElementById('header-btn-logout');
+            if (btnHeaderLogout) {
+                btnHeaderLogout.onclick = () => {
+                    if (confirm("Sair da aplicação?")) logout();
+                };
+            }
+
+            // Iniciar App
+            if (!mainContainer.innerHTML || mainContainer.innerHTML.includes('Entrar')) {
                 setView(recipesTemplate);
             }
         }
     });
 
+    // --- LÓGICA CRUD ---
     const setupGenericCrud = (service) => {
         document.getElementById('btn-back-settings').onclick = () => setView(settingsTemplate);
         
@@ -125,8 +121,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             nav('btn-manage-units', unitsTemplate);
             nav('btn-manage-areas', areasTemplate);
             
-            const btnLogout = document.getElementById('btn-logout');
-            if (btnLogout) btnLogout.onclick = () => { if(confirm("Sair?")) logout(); };
+            // Opcional: Mantemos o botão de logout nas definições também?
+            const btnSettingsLogout = document.getElementById('btn-logout');
+            if (btnSettingsLogout) btnSettingsLogout.onclick = () => { if(confirm("Sair?")) logout(); };
         }
 
         if (tpl === tagsTemplate) setupGenericCrud({ ...TagService, name: 'Tags' });
