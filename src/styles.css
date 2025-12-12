@@ -1,169 +1,49 @@
 /* src/styles.css */
 
 :root {
-    /* --- PALETA OPÇÃO B (Dark Chef) --- */
-    --primary-color: #E67E22; 
-    --bg-color: #1E272E; 
-    --surface-color: #2D3436; 
-    --text-color: #F5F6FA; 
-    --text-light: #B2BEC3; 
-    --border-color: #353b48; 
+    /* --- PALETA DE CORES (Dark Chef) --- */
+    --primary-color: #E67E22;  /* Laranja Queimado */
+    --bg-color: #1E272E;       /* Fundo Principal */
+    --surface-color: #2D3436;  /* Superfícies (Cartões, Menus) */
+    --text-color: #F5F6FA;     /* Texto Principal */
+    --text-light: #B2BEC3;     /* Texto Secundário */
+    --border-color: #353b48;   /* Bordas subtis */
+    --danger-color: #ff4757;   /* Vermelho para erros/apagar */
 
     /* Dimensões */
     --header-height: 60px;
     --nav-height: 60px;
+    --border-radius: 12px;
 }
 
-/* Reset */
+/* --- RESET & BASE --- */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent; /* Remove flash azul no toque (Mobile) */
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    /* Altura dinâmica para corrigir bug no Mobile Safari/Chrome */
-    height: 100dvh;
-    height: -webkit-fill-available; 
-    overflow: hidden; 
+    /* 100dvh garante altura correta em browsers móveis com barra de endereço */
+    height: 100dvh; 
+    overflow: hidden; /* O scroll é gerido internamente no #main-container */
 }
 
-/* App Shell Layout */
+/* --- APP SHELL (Layout Principal) --- */
 #app {
     display: flex;
     flex-direction: column;
     height: 100%;
     width: 100%;
+    max-width: 600px; /* Em desktop, limita a largura para parecer app */
+    margin: 0 auto;   /* Centra no desktop */
     background-color: var(--bg-color);
+    position: relative;
 }
 
-/* Conteúdo do Meio */
 #main-container {
     flex: 1;
-    overflow-y: auto; /* Scroll apenas aqui dentro */
-    /* Padding extra em baixo para o conteúdo não ficar escondido atrás do menu fixo */
-    padding: 20px 20px 80px 20px; 
-}
-
-/* Header */
-.header {
-    height: var(--header-height);
-    background-color: var(--surface-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid var(--border-color);
-    font-weight: bold;
-    color: var(--primary-color);
-    font-size: 1.3rem;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-/* Bottom Navigation (FIXA) */
-.bottom-nav {
-    position: fixed; /* Força a ficar no ecrã */
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: var(--nav-height);
-    
-    background-color: var(--surface-color);
-    border-top: 1px solid var(--border-color);
-    
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    
-    z-index: 1000; /* Garante que fica por cima de tudo */
-    padding-bottom: env(safe-area-inset-bottom); /* Respeito ao iPhone X+ */
-}
-
-.bottom-nav__item {
-    background: none;
-    border: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-light);
-    font-size: 0.7rem;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-    transition: color 0.3s ease;
-}
-
-.bottom-nav__item:hover,
-.bottom-nav__item:active {
-    color: var(--primary-color);
-}
-
-.bottom-nav__icon {
-    font-size: 1.4rem;
-    margin-bottom: 4px;
-    }
-
-.loader-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--bg-color);
-    z-index: 2000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.5s ease;
-}
-
-.loader-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.loader-icon {
-    width: 80px;
-    height: 80px;
-    animation: pulse 1.5s infinite ease-in-out;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.1); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
-}
-/* --- Menu de Configuração --- */
-.settings-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.settings-item {
-    background-color: var(--surface-color);
-    border: 1px solid var(--border-color);
-    padding: 16px;
-    border-radius: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--text-color);
-    font-size: 1rem;
-    cursor: pointer;
-    width: 100%; /* Ocupar largura total */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.settings-item:active {
-    background-color: var(--border-color);
-    transform: scale(0.98);
-    }
