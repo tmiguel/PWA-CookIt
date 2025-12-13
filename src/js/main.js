@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             nav('btn-manage-areas', areasTemplate);
             
             const btnLogout = document.getElementById('btn-logout');
-            if (btnLogout) btnLogout.onclick = () => { if(confirm("Sair?")) logout(); };
+            if (btnLogout) btnLogout.onclick = () => { if(confirm("Querer realmente terminar a sessão?")) logout(); };
         }
 
         if (tpl === tagsTemplate) setupGenericCrud({ ...TagService, name: 'Tags' });
