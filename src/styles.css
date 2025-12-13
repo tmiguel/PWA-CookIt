@@ -1,11 +1,11 @@
 /* src/styles.css */
 
 :root {
-    /* --- PALETA MODERN DARK --- */
-    --primary-color: #E67E22;  /* Laranja Queimado (Cor da Marca) */
-    --primary-dark: #D35400;   /* Tom mais escuro para hover/active */
+    /* --- PALETA MODERN DARK (Chef) --- */
+    --primary-color: #E67E22;  /* Laranja Queimado */
+    --primary-dark: #D35400;   /* Tom mais escuro para interações */
     
-    --bg-color: #121212;       /* Preto Fundo Principal */
+    --bg-color: #121212;       /* Preto Fundo (Material Design) */
     --surface-color: #1E1E1E;  /* Cinza Escuro (Cartões/Menus) */
     --input-bg: #2C2C2C;       /* Fundo dos Inputs */
     
@@ -18,7 +18,7 @@
     /* Dimensões */
     --header-height: 60px;
     --nav-height: 65px;
-    --border-radius: 16px;     /* Cantos arredondados modernos */
+    --border-radius: 16px;
 }
 
 /* --- RESET & BASE --- */
@@ -33,7 +33,7 @@
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    /* Altura dinâmica para corrigir bug no Mobile Safari/Chrome */
+    /* Altura dinâmica (dvh) para corrigir barras do browser em mobile */
     height: 100dvh;
     overflow: hidden; 
 }
@@ -44,7 +44,7 @@ body {
     flex-direction: column;
     height: 100%;
     width: 100%;
-    max-width: 600px; /* Limite largura em Desktop */
+    max-width: 600px; /* Limite em Desktop */
     margin: 0 auto;
     background-color: var(--bg-color);
     position: relative;
@@ -61,8 +61,8 @@ body {
 /* --- HEADER --- */
 .header {
     height: var(--header-height);
-    background-color: rgba(30, 30, 30, 0.95); /* Ligeira transparência */
-    backdrop-filter: blur(10px); /* Efeito vidro */
+    background-color: rgba(30, 30, 30, 0.95); /* Efeito vidro */
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -80,10 +80,10 @@ body {
     gap: 12px;
 }
 
-/* Correção de tamanho do Logótipo */
+/* Correção CRÍTICA de tamanho do Logótipo */
 .header__icon {
-    width: 32px;
-    height: 32px;
+    width: 32px !important;
+    height: 32px !important;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -159,7 +159,7 @@ body {
 
 .bottom-nav__item:hover,
 .bottom-nav__item:active,
-.bottom-nav__item--active { /* Classe futura para estado ativo */
+.bottom-nav__item--active {
     color: var(--primary-color);
 }
 
@@ -171,7 +171,7 @@ body {
 .form-header {
     display: flex;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     gap: 5px;
 }
 
@@ -199,9 +199,10 @@ body {
 
 .btn-back:active {
     background-color: var(--surface-color);
+    transform: scale(0.95);
 }
 
-/* --- CARTÕES E FORMULÁRIOS --- */
+/* --- CARTÕES E INPUTS --- */
 .card {
     background-color: var(--surface-color);
     border-radius: var(--border-radius);
@@ -248,7 +249,7 @@ body {
 
 /* --- BOTÕES --- */
 
-/* Botão Primário (Cheio) */
+/* Botão Primário (Sólido) */
 .btn-primary {
     width: 100%;
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
@@ -263,7 +264,7 @@ body {
     transition: transform 0.1s;
 }
 
-/* Botão Discreto (Outline - Pedido Novo) */
+/* Botão Discreto (Outline - Novo) */
 .btn-discrete {
     width: 100%;
     background: transparent;
@@ -278,4 +279,193 @@ body {
     transition: all 0.2s ease;
 }
 
-.btn-discr
+.btn-discrete:active {
+    background-color: rgba(230, 126, 34, 0.1);
+    transform: scale(0.98);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+.btn-primary:disabled,
+.btn-discrete:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+/* Botão Flutuante (+) */
+.fab-btn {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    transition: transform 0.2s;
+}
+
+.fab-btn:active {
+    transform: scale(0.9);
+}
+
+@media (min-width: 600px) {
+    .fab-btn {
+        right: calc(50% - 280px);
+    }
+}
+
+/* --- MENU CONFIGURAÇÕES (Lista Bonita) --- */
+.settings-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.settings-item {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    padding: 18px 20px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.2s;
+}
+
+.settings-item:active {
+    background-color: #2a2a2a;
+    transform: scale(0.99);
+}
+
+.settings-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.settings-icon {
+    font-size: 1.3rem;
+}
+
+.settings-arrow {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    opacity: 0.6;
+}
+
+/* --- LISTAS DE GESTÃO (CRUD) --- */
+.manage-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.list-subtitle {
+    margin: 30px 0 10px 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.manage-item {
+    background-color: var(--surface-color);
+    padding: 16px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border-color);
+}
+
+.tag-code {
+    background-color: var(--input-bg);
+    color: var(--primary-color);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 12px;
+    min-width: 45px;
+    text-align: center;
+    display: inline-block;
+}
+
+.del-btn {
+    background: rgba(255, 71, 87, 0.1);
+    border: none;
+    color: var(--danger-color);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.del-btn:active {
+    background: var(--danger-color);
+    color: white;
+}
+
+/* --- LOADING SCREEN --- */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+.loader-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-icon {
+    width: 80px;
+    height: 80px;
+    animation: pulse 1.5s infinite ease-in-out;
+    border-radius: 50%;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+    }
