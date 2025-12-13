@@ -8,12 +8,18 @@ import { tagsTemplate } from './templates/tags.js';
 import { unitsTemplate } from './templates/units.js';
 import { areasTemplate } from './templates/areas.js';
 
+// Auth Services
 import { monitorAuthState, loginWithGoogle, logout, finishRedirectLogin } from './services/auth-service.js';
+
+// Data Services
 import * as TagService from './services/tags-service.js';
 import * as UnitService from './services/units-service.js';
 import * as AreaService from './services/areas-service.js';
+import * as ShopService from './services/shopping-service.js'; // Novo Serviço de Listas
 
 document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Processar regresso do Google (Login Redirect)
     finishRedirectLogin();
 
     const loader = document.getElementById('app-loader');
@@ -21,17 +27,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const navContainer = document.getElementById('bottom-nav-container');
     const mainContainer = document.getElementById('main-container');
 
+    // Timeout de Segurança (5s)
     setTimeout(() => {
         if (loader && !loader.classList.contains('hidden')) {
             if (!headerContainer.innerHTML) showLoginScreen(); 
         }
     }, 5000);
 
+    // Função de Troca de Ecrã
     const setView = (template) => {
         if (mainContainer) mainContainer.innerHTML = template;
         bindEvents(template);
     };
 
+    // Função Mostrar Login
     const showLoginScreen = () => {
         if (loader) loader.classList.add('hidden');
         headerContainer.innerHTML = '';
@@ -42,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn) btn.onclick = loginWithGoogle;
     };
 
+    // --- MONITOR DE ESTADO (AUTH) ---
     monitorAuthState((user) => {
         if (loader) loader.classList.add('hidden');
 
@@ -53,13 +63,100 @@ document.addEventListener('DOMContentLoaded', () => {
             headerContainer.innerHTML = headerTemplate;
             navContainer.innerHTML = bottomNavTemplate;
 
-            // Iniciar App
+            // Se for o arranque, define a página inicial
             if (!mainContainer.innerHTML || mainContainer.innerHTML.includes('Entrar')) {
-                setView(recipesTemplate);
+                // Agora iniciamos na Lista de Compras para veres o Dashboard novo
+                setView(shoppingListTemplate);
             }
         }
     });
 
+    // --- LÓGICA: DASHBOARD DE LISTAS DE COMPRAS ---
+    const setupShoppingList = async () => {
+        const activeContainer = document.getElementById('active-list-container');
+        const historyContainer = document.getElementById('history-list-container');
+        const btnNew = document.getElementById('btn-new-list');
+        const btnMore = document.getElementById('btn-load-more');
+
+        // Helper para criar o HTML do Cartão (Tile)
+        const createTile = (list, isActive = false) => {
+            let dateStr = "Recentemente";
+            if (list.createdAt) {
+                // Formatar data do Firestore
+                dateStr = list.createdAt.toDate().toLocaleDateString('pt-PT', { day: '2-digit', month: 'short' });
+            }
+
+            const activeClass = isActive ? 'list-tile--active' : '';
+            const statusIcon = isActive ? '🛒' : '🔒';
+            const statusText = isActive ? 'A comprar...' : 'Fechada';
+
+            // Nota: O onclick aqui é temporário, depois vamos abrir a lista real
+            return `
+                <div class="list-tile ${activeClass}" onclick="alert('Abrir lista: ${list.name}')">
+                    <div>
+                        <h4>${list.name}</h4>
+                        <span class="date">${dateStr}</span>
+                    </div>
+                    <div class="status">
+                        <span>${statusIcon}</span>
+                        <span>${statusText}</span>
+                    </div>
+                </div>
+            `;
+        };
+
+        try {
+            // A. Carregar Lista Ativa
+            const activeList = await ShopService.getActiveList();
+            
+            if (activeList) {
+                activeContainer.innerHTML = createTile(activeList, true);
+            } else {
+                activeContainer.innerHTML = `<div class="card" style="text-align:center; padding:20px; color:var(--text-muted); box-shadow:none; background:transparent; border:1px dashed var(--border-color);">Nenhuma lista ativa.</div>`;
+            }
+
+            // B. Carregar Histórico
+            const historyLists = await ShopService.getHistoryLists(5);
+            historyContainer.innerHTML = '';
+
+            // Filtramos para não mostrar a ativa duplicada no histórico
+            const filteredHistory = historyLists.filter(l => l.id !== (activeList?.id));
+
+            if (filteredHistory.length === 0) {
+                historyContainer.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:#666; font-size:0.9rem;">Sem histórico recente.</p>`;
+            } else {
+                filteredHistory.forEach(list => {
+                    historyContainer.innerHTML += createTile(list, false);
+                });
+                
+                if (filteredHistory.length >= 5 && btnMore) {
+                    btnMore.style.display = 'block';
+                    btnMore.onclick = () => alert("Implementar paginação futura");
+                }
+            }
+
+        } catch (e) {
+            console.error(e);
+            historyContainer.innerHTML = `<p style="color:var(--danger-color);">Erro ao carregar listas.</p>`;
+        }
+
+        // C. Botão Criar Nova Lista
+        if (btnNew) {
+            btnNew.onclick = async () => {
+                const name = prompt("Nome da nova lista (ex: Supermercado):");
+                if (name) {
+                    try {
+                        await ShopService.createList(name);
+                        setupShoppingList(); // Recarregar ecrã
+                    } catch (e) {
+                        alert("Erro: " + e.message);
+                    }
+                }
+            };
+        }
+    };
+
+    // --- LÓGICA: CONFIGURAÇÕES (Tags, Units, Areas) ---
     const setupGenericCrud = (service) => {
         document.getElementById('btn-back-settings').onclick = () => setView(settingsTemplate);
         
@@ -111,21 +208,26 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) { errorMsg.innerText = e.message; errorMsg.style.display = 'block'; }
             finally { 
                 btnAdd.disabled = false; 
-                btnAdd.innerText = `Adicionar ${service.name.slice(0,-1)}`; // "Adicionar Tag" no botão de texto
+                btnAdd.innerText = `Adicionar ${service.name.slice(0,-1)}`;
             }
         };
         render();
     };
 
+    // --- GESTÃO DE EVENTOS DE NAVEGAÇÃO ---
     const bindEvents = (tpl) => {
         const nav = (id, targetTpl) => { 
             const el = document.getElementById(id); 
             if(el) el.onclick = () => setView(targetTpl); 
         };
         
+        // Menu Rodapé
         nav('nav-shopping', shoppingListTemplate);
         nav('nav-recipes', recipesTemplate);
         nav('nav-settings', settingsTemplate);
+
+        // Lógica Específica por Página
+        if (tpl === shoppingListTemplate) setupShoppingList();
 
         if (tpl === settingsTemplate) {
             nav('btn-manage-tags', tagsTemplate);
@@ -133,7 +235,9 @@ document.addEventListener('DOMContentLoaded', () => {
             nav('btn-manage-areas', areasTemplate);
             
             const btnLogout = document.getElementById('btn-logout');
-            if (btnLogout) btnLogout.onclick = () => { if(confirm("Querer realmente terminar a sessão?")) logout(); };
+            if (btnLogout) btnLogout.onclick = () => { 
+                if(confirm("Querer realmente terminar a sessão?")) logout(); 
+            };
         }
 
         if (tpl === tagsTemplate) setupGenericCrud({ ...TagService, name: 'Tags' });
