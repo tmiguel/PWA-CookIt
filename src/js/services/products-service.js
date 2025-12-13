@@ -1,10 +1,10 @@
 import { db } from '../firebase.js';
-import { collection, addDoc, getDocs, deleteDoc, doc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, addDoc, getDocs, deleteDoc, updateDoc, doc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const COLLECTION = 'ingredients';
+const COLLECTION = 'products';
 
-// Validação com Área obrigatória
-const validate = (code, name, area) => {
+// Agora aceitamos e guardamos isFood
+const validate = (code, name, area, isFood) => {
     const cleanCode = code ? code.trim() : '';
     const cleanName = name ? name.trim() : '';
     
@@ -14,28 +14,35 @@ const validate = (code, name, area) => {
     return { 
         code: cleanCode, 
         name: cleanName, 
-        area: area, // Novo campo
-        createdAt: serverTimestamp() 
+        area: area,
+        isFood: !!isFood, // Herdado da área
+        updatedAt: serverTimestamp() 
     };
 };
 
-export async function getIngredients() {
-    // Ordenar por nome para facilitar leitura
+export async function getProducts() {
     const q = query(collection(db, COLLECTION), orderBy("name", "asc"));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-export async function addIngredient(code, name, area) {
-    const data = validate(code, name, area);
+export async function addProduct(code, name, area, isFood) {
+    // Adicionamos createdAt aqui
+    const data = validate(code, name, area, isFood);
+    data.createdAt = serverTimestamp();
     
-    // Verificar duplicados
     const exists = await getDocs(query(collection(db, COLLECTION), where("code", "==", data.code)));
     if (!exists.empty) throw new Error(`O código "${data.code}" já existe.`);
     
     await addDoc(collection(db, COLLECTION), data);
 }
 
-export async function deleteIngredient(id) {
+export async function updateProduct(id, code, name, area, isFood) {
+    const data = validate(code, name, area, isFood);
+    const ref = doc(db, COLLECTION, id);
+    await updateDoc(ref, data);
+}
+
+export async function deleteProduct(id) {
     await deleteDoc(doc(db, COLLECTION, id));
 }
