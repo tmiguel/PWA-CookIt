@@ -61,11 +61,14 @@ body {
 /* --- HEADER --- */
 .header {
     height: var(--header-height);
-    background-color: rgba(30, 30, 30, 0.95); /* Efeito vidro */
+    background-color: rgba(30, 30, 30, 0.95);
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    
+    /* MUDANÇA AQUI: De 'space-between' para 'center' */
+    justify-content: center; 
+    
     padding: 0 20px;
     border-bottom: 1px solid var(--border-color);
     position: sticky;
@@ -74,13 +77,13 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
+/* O resto das classes do header mantém-se igual */
 .header__brand {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-/* Correção CRÍTICA de tamanho do Logótipo */
 .header__icon {
     width: 32px !important;
     height: 32px !important;
@@ -95,25 +98,7 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* Botão Logout no Header */
-.header__logout {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-}
-
-.header__logout:active {
-    background-color: var(--border-color);
-    color: var(--danger-color);
-}
-
+/* Podes apagar a classe .header__logout do CSS, já não é usada */
 /* --- BOTTOM NAVIGATION (Fixa) --- */
 .bottom-nav {
     position: fixed;
