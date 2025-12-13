@@ -31,10 +31,10 @@ export const settingsTemplate = `
             <div class="settings-arrow">❯</div>
         </button>
 
-        <!-- NOVO BOTÃO -->
-        <button id="btn-manage-ingredients" class="settings-item">
+        <!-- ALTERADO: PRODUTOS -->
+        <button id="btn-manage-products" class="settings-item">
             <div class="settings-info">
-                <span class="settings-icon">🥕</span><span>Gerir Ingredientes</span>
+                <span class="settings-icon">📦</span><span>Gerir Produtos</span>
             </div>
             <div class="settings-arrow">❯</div>
         </button>
